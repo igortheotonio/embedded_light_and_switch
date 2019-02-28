@@ -3,7 +3,7 @@ import os
 import shutil
 
 build = 'build'
-compile_code = 'cmake ..'
+compile_code = 'cmake -GNinja  ..'
 make = 'make -j4'
 
 if __name__ == "__main__":
