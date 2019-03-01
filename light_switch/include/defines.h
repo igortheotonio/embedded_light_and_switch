@@ -1,0 +1,15 @@
+#ifdef SW0_GPIO_FLAGS
+#define EDGE (SW0_GPIO_FLAGS | GPIO_INT_EDGE)
+#else
+#define EDGE (GPIO_INT_EDGE | GPIO_INT_ACTIVE_LOW)
+#endif
+
+#ifdef SW0_GPIO_PIN_PUD
+#define PULL_UP SW0_GPIO_PIN_PUD
+#else
+#define PULL_UP 0
+#endif
+
+#define BUTTONS_PORT SW0_GPIO_CONTROLLER
+
+#define BUTTON SW0_GPIO_PIN
