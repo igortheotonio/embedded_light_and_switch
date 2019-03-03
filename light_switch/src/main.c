@@ -6,10 +6,10 @@
 
 int main(void)
 {
-  while (1){
-    printk("Run...: ");
-    transition_machine(timeout);
-    k_sleep(K_SECONDS(1));
-  }
-  return 0;
+    while (1) {
+        printk("Run...: ");
+        transition_machine(timeout);
+        k_sleep(K_SECONDS(1));
+    }
+    return 0;
 }

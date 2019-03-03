@@ -4,6 +4,7 @@
 #include <logging/log.h>
 #include <misc/printk.h>
 #include <zephyr.h>
+
 #include "state.h"
 
 typedef struct {

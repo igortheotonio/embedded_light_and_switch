@@ -6,15 +6,23 @@
 #include <zephyr.h>
 
 typedef enum { S0, S1, S2, S3, S4, S5, number_of_states } state_e;
-typedef enum { timeout, zero, encoder_right, encoder_left, button_pressed, number_of_events } event_e;
+typedef enum {
+    timeout,
+    zero,
+    encoder_right,
+    encoder_left,
+    button_pressed,
+    number_of_events
+} event_e;
 
-static char *event_string[] = {"Timeout", "Zero", "Encoder_Right", "Encoder_Left", "Button_Pressed"};
+static char *event_string[] = {"Timeout", "Zero", "Encoder_Right", "Encoder_Left",
+                               "Button_Pressed"};
 
 typedef void (*action_function)();
 typedef state_e (*next_state_function)(event_e);
 
 typedef struct {
-    char * m_name;
+    char *m_name;
     uint8_t m_switch_state;
     uint8_t m_light_state;
     uint16_t m_pulse_width;
