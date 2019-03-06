@@ -22,7 +22,7 @@
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_STATUS BT_MESH_MODEL_OP_2(0x82, 0x58)
 
 
-extern const struct bt_mesh_comp prov;
+const struct bt_mesh_comp prov;
 
 void bt_ready(int err);
 
