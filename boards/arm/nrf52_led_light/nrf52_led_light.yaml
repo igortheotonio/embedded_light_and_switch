@@ -1,0 +1,13 @@
+identifier: nrf52_led_light
+name: nRF52-LED_LIGHT
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 64
+flash: 512
+supported:
+  - adc
+  - nvs
