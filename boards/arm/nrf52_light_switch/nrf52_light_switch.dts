@@ -49,7 +49,7 @@
 		compatible = "gpio-keys";
 		button0: button_0 {
 			gpios = <&gpio0 13 GPIO_PUD_PULL_UP>;
-			label = "SWITCH";
+			label = "BUTTON";
 		};
 		button1: button_1 {
 			gpios = <&gpio0 14 GPIO_PUD_PULL_UP>;

@@ -61,17 +61,6 @@ void main(void) {
   gpio_pin_configure(bdev, BUTTON2,
 					 GPIO_DIR_IN | GPIO_INT | PULL_UP | EDGE);
 
-
-  //Configure buttons callback
-  /*
-  gpio_init_callback(&gpio_cb, ic_buttons_callback,
-					 BIT(BUTTON0) | BIT(BUTTON1) | BIT(BUTTON2) | BIT(BUTTON3)
-  );
-  gpio_add_callback(bdev, &gpio_cb);
-  gpio_pin_enable_callback(bdev, BUTTON0);
-  gpio_pin_enable_callback(bdev, BUTTON1);
-  gpio_pin_enable_callback(bdev, BUTTON2);
-  */
   while (1) {
 
 	u32_t val0 = 0;
@@ -84,28 +73,3 @@ void main(void) {
 	k_sleep(SLEEP_TIME);
   }
 }
-/*
-void ic_buttons_callback(struct device *buttons_device,
-                         struct gpio_callback *callback,
-                         u32_t button_pin_mask) {
-
-    switch(button_pin_mask) {
-        case BIT(SW0):
-            //Turn on or turn off led 0
-            printk("button 0 pressed\n");
-        break;
-        case BIT(BUTTON1):
-            //Turn on or turn off led 1
-            printk("button 1 pressed\n");
-        break;
-        case BIT(BUTTON2):
-            //Turn on or turn off led 2
-            printk("button 2 pressed\n");
-        break;
-        case BIT(BUTTON3):
-            //Turn on or turn off led 3
-            printk("button 3 pressed\n");
-        return;
-    }
-}
-*/
