@@ -20,7 +20,7 @@
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 	};
-
+    /* TODO: Change leds pins to 11, 12, 13, 14 e 15 */
 	leds {
 		compatible = "gpio-leds";
 		led0: led_0 {
@@ -40,11 +40,11 @@
 			label = "LED 3";
 		};
 		led4: led_4 {
-			gpios = <&gpio0 21 GPIO_INT_ACTIVE_LOW>;
+			gpios = <&gpio0 22 GPIO_INT_ACTIVE_LOW>;
 			label = "LED 4";
 		};
 	};
-
+    /* TODO: Change buttons pins to 8, 9 10 */
 	buttons {
 		compatible = "gpio-keys";
 		button0: button_0 {
