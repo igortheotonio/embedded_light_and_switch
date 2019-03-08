@@ -26,6 +26,8 @@ list(APPEND HEADERS
 
 list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/main.c"
+    "${PROJECT_SOURCE_DIR}/src/encoder.c"
+    "${PROJECT_SOURCE_DIR}/src/leds.c"
     )
 
 include_directories(${HEADERS})
