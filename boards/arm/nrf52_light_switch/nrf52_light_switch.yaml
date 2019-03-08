@@ -1,0 +1,13 @@
+identifier: nrf52_light_switch
+name: nRF52-LIGHT_SWITCH
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 64
+flash: 512
+supported:
+  - adc
+  - nvs
