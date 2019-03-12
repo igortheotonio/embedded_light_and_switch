@@ -34,19 +34,21 @@ int encoder_configure(encoder_device_t *encoder_device)
     return -EPERM;
 }
 
-void encoder_init_and_configure(encoder_device_t *encoder_device,
-                                gpio_callback_handler_t callback_function)
+int encoder_init_and_configure(encoder_device_t *encoder_device,
+                               gpio_callback_handler_t callback_function)
 {
     encoder_init(encoder_device);
     encoder_configure(encoder_device);
     encoder_configure_callback(encoder_device, callback_function);
+
+    return 0;
 }
 
 void encoder_configure_callback(encoder_device_t *encoder_device,
                                 gpio_callback_handler_t callback_function)
 {
     gpio_init_callback(&encoder_device->m_device_cb, callback_function,
-                       BIT(ENCODER_CHANNEL_A) | BIT(ENCODER_CHANNEL_B) | BIT(BUTTON));
+                       BIT(ENCODER_CHANNEL_A) | BIT(BUTTON));
     gpio_add_callback(encoder_device->m_device, &encoder_device->m_device_cb);
     for (u8_t i = 0; i < NUMBER_OF_INPUTS; i++) {
         gpio_pin_enable_callback(encoder_device->m_device, encoder_pins[i]);

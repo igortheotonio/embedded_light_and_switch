@@ -20,10 +20,18 @@ typedef struct {
 
 int leds_init(leds_device_t *leds_device);
 
+int leds_configure(leds_device_t *leds_device);
+
+int turn_all_leds_on(leds_device_t *leds_device);
+
+int turn_all_leds_off(leds_device_t *leds_device);
+
 int leds_brightness(leds_device_t *leds_device, u16_t brightness);
 
 int leds_change_state(leds_device_t *leds_device);
 
 int leds_set_brightness(leds_device_t *leds_device, u16_t brightness);
+
+int leds_init_and_configure(leds_device_t *leds_device);
 
 #endif  // _IC_LEDS_H_

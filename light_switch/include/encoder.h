@@ -24,8 +24,8 @@ int encoder_init(encoder_device_t *encoder_device);
 
 int encoder_configure(encoder_device_t *encoder_device);
 
-void encoder_init_and_configure(encoder_device_t *encoder_device,
-                                gpio_callback_handler_t callback_function);
+int encoder_init_and_configure(encoder_device_t *encoder_device,
+                               gpio_callback_handler_t callback_function);
 
 void encoder_configure_callback(encoder_device_t *encoder_device,
                                 gpio_callback_handler_t callback_function);

@@ -19,12 +19,12 @@
 */
 
 // Outputs
-#define PWM_DRIVER DT_NORDIC_NRF_PWM_PWM_0_LABEL
-#define PWM_CHANNEL0 LED0_GPIO_PIN
-#define PWM_CHANNEL1 LED1_GPIO_PIN
-#define PWM_CHANNEL2 LED2_GPIO_PIN
-#define PWM_CHANNEL3 LED3_GPIO_PIN
-#define PWM_CHANNEL4 LED4_GPIO_PIN
+#define LED_PORT LED0_GPIO_CONTROLLER
+#define LED0 LED0_GPIO_PIN
+#define LED1 LED1_GPIO_PIN
+#define LED2 LED2_GPIO_PIN
+#define LED3 LED3_GPIO_PIN
+#define LED4 LED4_GPIO_PIN
 
 // Flags
 #define MAX_PWM_PERIOD (USEC_PER_SEC / 50)
@@ -34,13 +34,16 @@
     # Defines of leds
 */
 
-#define NUMBER_OF_BLINK 10
+#define STANDARD_LED GPIO_DIR_OUT | GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_HIGH
+#define NUMBER_OF_BLINKS 5
 #define MAX_BRIGHTNESS 65535.0
 #define MIN_BRIGHTNESS 0.0
 #define NUMBER_OF_LEDS 5
 #define LED_BRIGHTNESS_PART (100 / NUMBER_OF_LEDS)
-#define ON 1;
-#define OFF 0;
+#define LED_ON 0
+#define LED_OFF 1
+#define ON 1
+#define OFF 0
 
 /*
     # Defines of encoder

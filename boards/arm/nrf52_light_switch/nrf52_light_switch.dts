@@ -41,7 +41,7 @@
 			label = "LED 3";
 		};
 		led4: led_4 {
-			gpios = <&gpio0 21 GPIO_INT_ACTIVE_LOW>;
+			gpios = <&gpio0 22 GPIO_INT_ACTIVE_LOW>;
 			label = "LED 4";
 		};
 	};
@@ -51,10 +51,7 @@
 		button0: button_0 {
 			gpios = <&gpio0 13 GPIO_PUD_PULL_UP>;
 			label = "BUTTON";
-		};	ch0-pin = <17>;
-	ch1-pin = <18>;
-	ch2-pin = <19>;
-	ch3-pin = <20>;
+		};	
 		button1: button_1 {
 			gpios = <&gpio0 14 GPIO_PUD_PULL_UP>;
 			label = "CHANNEL_A";
@@ -116,10 +113,7 @@
 &pwm0 {
 	status = "ok";
 	ch0-pin = <17>;
-	ch1-pin = <18>;
-	ch2-pin = <19>;
-	ch3-pin = <20>;
-	ch4-pin = <21>;
+	ch0-inverted;
 };
 
 &spi0 {
