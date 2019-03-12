@@ -395,7 +395,8 @@ the board are working properly with Zephyr:
    samples/basic/button
 
 You can build and flash the examples to make sure Zephyr is running correctly on
-your board. The button and LED definitions can be found in :file:`boards/arm/nrf52_pca10040/nrf52_pca10040.dts`.
+your board. The button and LED definitions can be found in
+:zephyr_file:`boards/arm/nrf52_pca10040/nrf52_pca10040.dts`.
 
 References
 **********
@@ -404,4 +405,3 @@ References
 
 .. _nRF52 DK website: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52-DK
 .. _Nordic Semiconductor Documentation library: https://www.nordicsemi.com/DocLib
-
