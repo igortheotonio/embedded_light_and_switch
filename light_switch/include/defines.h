@@ -58,3 +58,4 @@
 */
 
 #define SLEEP_TIME 500
+#define BUTTON_DEBOUNCE_DELAY 250
