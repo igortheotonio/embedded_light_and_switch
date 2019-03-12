@@ -1,4 +1,6 @@
-*/build/*
+led_light/build
+light_switch/build
+light_switch/cmake-build-debug/
 .vscode/
 .idea/
 tags
