@@ -34,7 +34,7 @@ static u8_t dev_uuid[16] = {0xdd, 0xdd};
 
 static const struct bt_mesh_prov prov = {
     .uuid           = dev_uuid,
-    .output_size    = 6,
+    .output_size    = 1,
     .output_actions = BT_MESH_DISPLAY_NUMBER | BT_MESH_DISPLAY_STRING,
     .output_number  = output_number,
     .output_string  = output_string,
@@ -74,4 +74,3 @@ void bt_ready(int err)
 
     printk("Mesh initialized\n");
 }
-
