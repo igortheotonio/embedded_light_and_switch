@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.8.2)
 
-set(BOARD nrf52_pca10040)
+set(BOARD_ROOT ${CMAKE_SOURCE_DIR}/../)
+set(BOARD nrf52_light_switch)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(LIGHT_SWITCH)
 
@@ -25,8 +26,8 @@ list(APPEND HEADERS
 
 list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/main.c"
-    "${PROJECT_SOURCE_DIR}/src/state_machine.c"
-    "${PROJECT_SOURCE_DIR}/src/state.c"
+    "${PROJECT_SOURCE_DIR}/src/encoder.c"
+    "${PROJECT_SOURCE_DIR}/src/leds.c"
     )
 
 include_directories(${HEADERS})
