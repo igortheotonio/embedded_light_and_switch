@@ -26,6 +26,7 @@ list(APPEND HEADERS
 
 list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/main.c"
+    "${PROJECT_SOURCE_DIR}/src/firmware_version.c"
     )
 
 include_directories(${HEADERS})
