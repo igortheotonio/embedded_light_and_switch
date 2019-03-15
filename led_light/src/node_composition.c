@@ -8,24 +8,6 @@ BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 // 2 opcode
 // 1 tt
 BT_MESH_MODEL_PUB_DEFINE(light_lightness_srv_pub, NULL, 4 + 2 + 1);
-BT_MESH_MODEL_PUB_DEFINE(light_lightness_cli_pub, NULL, 4 + 2 + 1);
-
-// Operations
-const struct bt_mesh_model_op light_lightness_srv_op[] = {
-    // {BT_MESH_MODEL_OP_GENERIC_LEVEL_GET, 0, generic_level_get},
-    // {BT_MESH_MODEL_OP_GENERIC_LEVEL_SET, 2, generic_level_set},
-    // {BT_MESH_MODEL_OP_GENERIC_LEVEL_SET_UNACK, 2, generic_level_set_unack},
-    // BT_MESH_MODEL_OP_END,
-};
-
-const struct bt_mesh_model_op light_lightness_setup_srv_op[] =
-    {
-        {BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_SET, 2, light_lightness_default_set},
-        {BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_SET_UNACK, 2, light_lightness_default_set_unack},
-        {BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_SET, 4, light_lightness_range_set},
-        {BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_SET_UNACK, 4, light_lightness_range_set_unack},
-        BT_MESH_MODEL_OP_END,
-}
 
 // Comp
 
@@ -42,25 +24,26 @@ static struct bt_mesh_cfg_srv cfg_srv = {
 static struct bt_mesh_health_srv health_srv = {};
 static struct bt_mesh_cfg_cli cfg_cli       = {};
 
-static struct bt_mesh_model root_models[] = {
+struct bt_mesh_model root_models[] = {
     BT_MESH_MODEL_CFG_SRV(&cfg_srv),
     BT_MESH_MODEL_CFG_CLI(&cfg_cli),
     BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 };
 
-static struct bt_mesh_model srv_models[] =
-    {
-        BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV, light_lightness_srv_op,
-                      &light_lightness_srv_pub, &light_lightness_srv_user_data),
-        BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV, light_lightness_setup_srv_op,
-                      &light_lightness_srv_pub, &light_lightness_srv_user_data),
-}
+struct bt_mesh_model srv_models[] = {
+    // BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV, light_lightness_srv_op,
+    //               &light_lightness_srv_pub, &light_lightness_state_data),
+    BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV, light_lightness_setup_srv_op,
+                  &light_lightness_srv_pub, &light_lightness_state_data),
+};
 
 static struct bt_mesh_elem elements[] = {
-    BT_MESH_ELEM(0, root_models, vnd_models),
+    BT_MESH_ELEM(0, root_models, BT_MESH_MODEL_NONE),
     BT_MESH_ELEM(0, srv_models, BT_MESH_MODEL_NONE),
 };
 
-const struct bt_mesh_comp comp {
-    .cid = CID_ZEPHYR, .elem = elements, .elem_count = ARRAY_SIZE(elements),
-}
+const struct bt_mesh_comp comp = {
+    .cid        = BT_COMP_ID_LF,
+    .elem       = elements,
+    .elem_count = ARRAY_SIZE(elements),
+};

@@ -6,7 +6,7 @@
  * @date 2019-03-06
  */
 
-#include "mesh.h"
+#include "bt_mesh.h"
 
 
 static int output_number(bt_mesh_output_action_t action, u32_t number)

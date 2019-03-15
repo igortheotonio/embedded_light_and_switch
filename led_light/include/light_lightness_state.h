@@ -25,8 +25,8 @@ struct light_lightness_state {
     u16_t def;
 
     u8_t status_code;
-    u16_t light_range_min;
-    u16_t light_range_max;
+    u16_t range_min;
+    u16_t range_max;
     u32_t lightness_range;
 
     u8_t last_tid;
