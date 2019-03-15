@@ -10,9 +10,9 @@
 #define _NODE_COMPOSITION_H_
 
 
+#include "light_lightness_state.h"
 #include "mesh.h"
 #include "node_composition.h"
-#include "transition.h"
 
 extern struct bt_mesh_model root_models[];
 extern struct bt_mesh_model node_models[];
