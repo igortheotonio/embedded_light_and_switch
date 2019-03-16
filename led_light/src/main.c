@@ -16,19 +16,17 @@
 
 #define SLEEP_TIME 100
 
-LOG_MODULE_DECLARE(main);
+LOG_MODULE_REGISTER(MAIN, 4);
 
-int main(void)
+void main(void)
 {
     LOG_INF("Firmware version: %d.%d.%d\n", version_get_major(), version_get_minor(),
             version_get_build());
     int err = bt_enable(bt_ready);
     if (err) {
         LOG_ERR("Error log.");
-        return err;
     }
     while (1) {
         k_sleep(SLEEP_TIME);
     }
-    return 0;
 }
