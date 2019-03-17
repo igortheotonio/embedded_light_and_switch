@@ -1,9 +1,9 @@
 #include "node_composition.h"
 
+#include "global_state.h"
+
 BT_MESH_MODEL_PUB_DEFINE(pub_onoff_srv, NULL, 2 + 2 + 1);
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
-
-u8_t state = 0;
 
 static struct bt_mesh_health_srv health_srv = {};
 
