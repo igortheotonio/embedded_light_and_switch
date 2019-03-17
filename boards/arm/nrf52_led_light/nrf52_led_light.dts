@@ -9,7 +9,7 @@
 #include <nordic/nrf52832_qfaa.dtsi>
 
 / {
-	model = "nRF52-LED_LIGHT";
+	model = "nRF52-led_light";
 	compatible = "nordic,pca10040-dk", "nordic,nrf52832-qfaa",
 		     "nordic,nrf52832";
 
@@ -57,37 +57,10 @@
 	cts-pin = <7>;
 };
 
-&i2c0 {
+&pwm0 {
 	status = "ok";
-	sda-pin = <26>;
-	scl-pin = <27>;
-};
-
-&i2c1 {
-	status = "ok";
-	sda-pin = <30>;
-	scl-pin = <31>;
-};
-
-&spi0 {
-	status = "ok";
-	sck-pin = <27>;
-	mosi-pin = <26>;
-	miso-pin = <25>;
-};
-
-&spi1 {
-	status = "ok";
-	sck-pin = <31>;
-	mosi-pin = <30>;
-	miso-pin = <29>;
-};
-
-&spi2 {
-	status = "ok";
-	sck-pin = <22>;
-	mosi-pin = <23>;
-	miso-pin = <24>;
+	ch0-pin = <17>;
+	ch0-inverted;
 };
 
 &flash0 {
