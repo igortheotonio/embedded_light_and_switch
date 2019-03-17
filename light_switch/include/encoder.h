@@ -21,6 +21,8 @@ typedef struct {
     s8_t m_position;
 } encoder_device_t;
 
+extern encoder_device_t encoder;
+
 int encoder_init(encoder_device_t *encoder_device);
 
 int encoder_configure(encoder_device_t *encoder_device);

@@ -1,6 +1,6 @@
 set(AUTO_GEN_MESSAGE "/* File was auto-generated, do not modify! */")
 set(MAJOR 0)
-set(MINOR 0)
+set(MINOR 1)
 
 set(VERSION_FILE "${PROJECT_SOURCE_DIR}/build.version")
 

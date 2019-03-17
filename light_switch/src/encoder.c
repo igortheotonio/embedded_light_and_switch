@@ -1,7 +1,5 @@
 #include "encoder.h"
 
-extern encoder_device_t *encoder_p;
-extern leds_device_t *leds_p;
 static u32_t time, button_last_time;
 static const u32_t encoder_pins[] = {BUTTON, ENCODER_CHANNEL_A, ENCODER_CHANNEL_B};
 
@@ -59,7 +57,7 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
             return;
         }
         printk("Button pressed!\n");
-        leds_change_state(leds_p);
+        leds_change_state(&leds);
         button_last_time = time;
         break;
     case BIT(ENCODER_CHANNEL_A):
@@ -68,12 +66,11 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
         gpio_pin_read(encoder_device, ENCODER_CHANNEL_A, &a_state);
         gpio_pin_read(encoder_device, ENCODER_CHANNEL_B, &b_state);
         u8_t new_state = a_state | (b_state << SIZE_ONE_STATE);
-        if (encoder_p->m_state != new_state) {
-            encoder_p->m_position +=
-                encoder_diretion[new_state | (encoder_p->m_state << SIZE_TWO_STATE)];
-            encoder_p->m_state = new_state;
+        if (encoder.m_state != new_state) {
+            encoder.m_position += encoder_diretion[new_state | (encoder.m_state << SIZE_TWO_STATE)];
+            encoder.m_state = new_state;
         }
-        printk("Position %d\n", encoder_p->m_position);
+        printk("Position %d\n", encoder.m_position);
         break;
     default:
         printk("Invalid state\n");

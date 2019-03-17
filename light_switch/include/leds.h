@@ -18,6 +18,8 @@ typedef struct {
     u8_t m_state;
 } leds_device_t;
 
+extern leds_device_t leds;
+
 int leds_init(leds_device_t *leds_device);
 
 int leds_configure(leds_device_t *leds_device);

@@ -1,4 +1,5 @@
 led_light/build
+led_light_bring_up/build
 light_switch/build
 light_switch/cmake-build-debug/
 .vscode/
