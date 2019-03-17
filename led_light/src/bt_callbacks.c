@@ -14,7 +14,8 @@ const struct bt_mesh_model_op light_lightness_setup_srv_op[] = {
 void light_lightness_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                  struct net_buf_simple *buf)
 {
-    struct net_buf_simple *msg          = NET_BUF_SIMPLE(2 + 2 + 4);
+    struct bt_mesh_model_pub *pub;
+    pub                                 = model->pub;
     struct light_lightness_state *state = model->user_data;
 
     u16_t value = 0;
@@ -27,11 +28,16 @@ void light_lightness_default_get(struct bt_mesh_model *model, struct bt_mesh_msg
         value = state->actual;
     }
 
-    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_STATUS);
-    net_buf_simple_add_le16(msg, value);
+    bt_mesh_model_msg_init(pub->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_STATUS);
+    net_buf_simple_add_le16(pub->msg, value);
 
-    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, pub->msg, NULL, NULL)) {
         printk("Unable to send LightLightnessDef Status response\n");
+    }
+
+    int err = bt_mesh_model_publish(model);
+    if (err) {
+        printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub->addr);
     }
 }
 
@@ -57,15 +63,21 @@ void light_lightness_default_set_unack(struct bt_mesh_model *model, struct bt_me
 void light_lightness_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                struct net_buf_simple *buf)
 {
-    struct net_buf_simple *msg          = NET_BUF_SIMPLE(2 + 4 + 4);
+    struct bt_mesh_model_pub *pub;
+    pub                                 = model->pub;
     struct light_lightness_state *state = model->user_data;
 
-    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_STATUS);
-    net_buf_simple_add_le16(msg, state->range_min);
-    net_buf_simple_add_le16(msg, state->range_max);
+    bt_mesh_model_msg_init(pub->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_STATUS);
+    net_buf_simple_add_le16(pub->msg, state->range_min);
+    net_buf_simple_add_le16(pub->msg, state->range_max);
 
-    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, pub->msg, NULL, NULL)) {
         printk("Unable to send LightLightnessRange Status response\n");
+    }
+
+    int err = bt_mesh_model_publish(model);
+    if (err) {
+        printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub->addr);
     }
 }
 
