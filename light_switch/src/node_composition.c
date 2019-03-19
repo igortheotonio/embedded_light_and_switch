@@ -12,13 +12,13 @@ struct lightness_cli light_lightness_cli[] = {
 };
 
 struct bt_mesh_cfg_srv cfg_srv = {
-    .relay            = BT_MESH_RELAY_ENABLED,
-    .beacon           = BT_MESH_BEACON_ENABLED,
-    .frnd             = BT_MESH_FRIEND_NOT_SUPPORTED,
-    .gatt_proxy       = BT_MESH_GATT_PROXY_ENABLED,
-    .default_ttl      = 7,
-    .net_transmit     = BT_MESH_TRANSMIT(2, 20),
-    .relay_retransmit = BT_MESH_TRANSMIT(2, 20),
+    .relay        = BT_MESH_RELAY_DISABLED,
+    .beacon       = BT_MESH_BEACON_ENABLED,
+    .frnd         = BT_MESH_FRIEND_NOT_SUPPORTED,
+    .gatt_proxy   = BT_MESH_GATT_PROXY_ENABLED,
+    .default_ttl  = 7,
+    .net_transmit = BT_MESH_TRANSMIT(2, 20),
+    //.relay_retransmit = BT_MESH_TRANSMIT(2, 20),
 };
 
 static struct bt_mesh_health_srv health_srv = {};
@@ -105,24 +105,52 @@ void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_ms
     printk("Range Max = %04x\n", net_buf_simple_pull_le16(buf));
 }
 
+void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message_type)
+{
+    struct bt_mesh_model_pub *pub_cli;
+    pub_cli = bt_cli->model_cli->pub;
+
+    printk("Sending get actual message to 0x%04x\n", pub_cli->addr);
+
+    bt_mesh_model_msg_init(pub_cli->msg, message_type);
+    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    if (err) {
+        printk("BT MESH MODEL PUB %d message to 0x%04x\n", err, pub_cli->addr);
+    }
+}
+
+void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message_type)
+{
+    struct bt_mesh_model_pub *pub_cli;
+    pub_cli                    = bt_cli->model_cli->pub;
+    struct net_buf_simple *msg = NET_BUF_SIMPLE(2 + 5 + 4);
+    printk("Sending set actual message to 0x%04x\n", pub_cli->addr);
+    bt_mesh_model_msg_init(msg, message_type);
+    net_buf_simple_add_le16(msg, 50000);  // TODO: Alterar para o real
+    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    if (err) {
+        printk("BT MESH MODEL PUB %d message to 0x%04x\n", err, pub_cli->addr);
+    }
+}
+
 void lightness_level_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                          struct net_buf_simple *buf)
 {
-    printk("[0x%04x]: Received a get level msg from group address 0x%04x, sent by 0x%04x.\n",
-           bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
-    struct bt_mesh_model_pub *pub_cli;
-    pub_cli                = model->pub;
-    struct level_srv *elem = model->user_data;
+    // printk("[0x%04x]: Received a get level msg from group address 0x%04x, sent by 0x%04x.\n",
+    //       bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
+    // struct bt_mesh_model_pub *pub_cli;
+    // pub_cli                = model->pub;
+    // struct level_srv *elem = model->user_data;
 
     // 2 bytes for the opcode
     // 1 bytes parameters: present onoff value
     // 2 optional bytes for target onoff and remaining time
     // 4 additional bytes for the TransMIC
-    printk("Sending level status msg to 0x%04x, value -> %d\n", pub_cli->addr, level_perc);
-    bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_OP_2(0x82, 0x4E));
-    net_buf_simple_add_le16(pub_cli->msg, level);
-    int err = bt_mesh_model_publish(model);
-    if (err) {
-        printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub_cli->addr);
-    }
+    // printk("Sending level status msg to 0x%04x, value -> %d\n", pub_cli->addr, level_perc);
+    // bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_OP_2(0x82, 0x4E));
+    // net_buf_simple_add_le16(pub_cli->msg, level);
+    // int err = bt_mesh_model_publish(model);
+    // if (err) {
+    //   printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub_cli->addr);
+    //}
 }

@@ -56,6 +56,7 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
             button_last_time = time;
             return;
         }
+        send_light_lightness_actual_set(&light_lightness_cli[0], BT_MESH_MODEL_OP_2(0x82, 0x4C));
         printk("Button pressed!\n");
         leds_change_state(&leds);
         button_last_time = time;
