@@ -4,10 +4,10 @@ u16_t lightness_cli_state = 0;
 
 struct lightness_cli light_lightness_cli[] = {
     {
-        .leds_cli = &leds,
-        .def      = 0,
-        .act      = 0,
-        .tid      = 0,
+        // .leds_cli = &leds,
+        .def = 0,
+        .act = 0,
+        .tid = 0,
     },
 };
 
@@ -105,24 +105,24 @@ void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_ms
     printk("Range Max = %04x\n", net_buf_simple_pull_le16(buf));
 }
 
-// void lightness_level_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-//                          struct net_buf_simple *buf)
-// {
-//     printk("[0x%04x]: Received a get level msg from group address 0x%04x, sended by 0x%04x.\n",
-//            bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
-//     struct bt_mesh_model_pub *pub_cli;
-//     pub_cli                = model->pub;
-//     struct level_srv *elem = model->user_data;
+void lightness_level_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+                         struct net_buf_simple *buf)
+{
+    printk("[0x%04x]: Received a get level msg from group address 0x%04x, sent by 0x%04x.\n",
+           bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
+    struct bt_mesh_model_pub *pub_cli;
+    pub_cli                = model->pub;
+    struct level_srv *elem = model->user_data;
 
-//     // 2 bytes for the opcode
-//     // 1 bytes parameters: present onoff value
-//     // 2 optional bytes for target onoff and remaining time
-//     // 4 additional bytes for the TransMIC
-//     printk("Sending level status msg to 0x%04x, value -> %d\n", pub_cli->addr, level_perc);
-//     bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_OP_2(0x82, 0x4E));
-//     net_buf_simple_add_le16(pub_cli->msg, level);
-//     int err = bt_mesh_model_publish(model);
-//     if (err) {
-//         printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub_cli->addr);
-//     }
-// }
+    // 2 bytes for the opcode
+    // 1 bytes parameters: present onoff value
+    // 2 optional bytes for target onoff and remaining time
+    // 4 additional bytes for the TransMIC
+    printk("Sending level status msg to 0x%04x, value -> %d\n", pub_cli->addr, level_perc);
+    bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_OP_2(0x82, 0x4E));
+    net_buf_simple_add_le16(pub_cli->msg, level);
+    int err = bt_mesh_model_publish(model);
+    if (err) {
+        printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub_cli->addr);
+    }
+}

@@ -10,7 +10,7 @@
 
 struct lightness_cli {
     struct bt_mesh_model *model_cli;
-    struct leds_device_t *leds_cli;
+    // struct leds_device_t *leds_cli;
     u16_t def;
     u16_t act;
     u8_t tid;

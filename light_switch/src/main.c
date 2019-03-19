@@ -5,6 +5,7 @@
 
 #include "bt_mesh.h"
 #include "encoder.h"
+#include "firmware_version.h"
 #include "leds.h"
 
 LOG_MODULE_REGISTER(MAIN);
@@ -14,8 +15,8 @@ leds_device_t leds       = {0};
 
 void main(void)
 {
-    // printk("Firmware version: %d.%d.%d\n", ic_version_get_major(), ic_version_get_minor(),
-    //        ic_version_get_build());
+    printk("Firmware version: %d.%d.%d\n", version_get_major(), version_get_minor(),
+           version_get_build());
     int err;
     leds_init_and_configure(&leds);
     encoder_init_and_configure(&encoder);
