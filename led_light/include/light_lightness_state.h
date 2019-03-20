@@ -14,6 +14,11 @@
 
 #include <zephyr/types.h>
 
+#define MINDIFF 2.25e-308
+#define LIGHT_OFF 0x0000
+
+typedef int (*set_attribute_t)(u16_t x, u16_t y, u16_t message_type);
+
 struct light_lightness_state {
     u16_t linear;
     u16_t target_linear;
@@ -33,12 +38,10 @@ struct light_lightness_state {
     u16_t last_src_addr;
     u16_t last_dst_addr;
     s64_t last_msg_timestamp;
+    set_attribute_t set_attribute;
 };
 
 
 extern struct light_lightness_state light_lightness_state_data;
-
-int set_attribute(u16_t x, u16_t y, u16_t message_type);
-
 
 #endif
