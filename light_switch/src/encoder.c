@@ -57,6 +57,8 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
             return;
         }
 
+        get_all_data();
+
         if (light_lightness_cli[0].m_actual == 0) {
             if (light_lightness_cli[0].m_default == 0) {
                 leds.m_brightness = light_lightness_cli[0].m_last;

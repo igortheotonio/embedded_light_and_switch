@@ -31,11 +31,13 @@ void main(void)
 
     light_lightness_cli[0].m_model_cli = &change_model[0];
     u16_t brightness                   = 0;
-    while (!light_lightness_cli[0].m_model_cli->pub->addr) {
-        k_sleep(SLEEP_TIME);
-    }
-    k_sleep(1000);
-    get_all_data();
+    // while (!light_lightness_cli[0].m_model_cli->pub->addr) {
+    //     k_sleep(SLEEP_TIME);
+    // }
+    // k_sleep(1000);
+    // get_all_data();
+    // send_light_lightness_actual_get(&light_lightness_cli[0],
+    //                                 BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET);
     encoder_init_and_configure(&encoder);
     while (1) {
         if (encoder.m_position) {

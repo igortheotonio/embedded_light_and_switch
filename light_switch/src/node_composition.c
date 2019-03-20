@@ -19,8 +19,8 @@ struct bt_mesh_cfg_srv cfg_srv = {
     .frnd             = BT_MESH_FRIEND_NOT_SUPPORTED,
     .gatt_proxy       = BT_MESH_GATT_PROXY_ENABLED,
     .default_ttl      = 7,
-    .net_transmit     = BT_MESH_TRANSMIT(2, 20),
-    .relay_retransmit = BT_MESH_TRANSMIT(2, 20),
+    .net_transmit     = BT_MESH_TRANSMIT(1, 20),
+    .relay_retransmit = BT_MESH_TRANSMIT(1, 20),
 };
 
 static struct bt_mesh_health_srv health_srv = {};
@@ -34,7 +34,7 @@ const struct bt_mesh_model_op light_lightness_cli_op[] = {
     BT_MESH_MODEL_OP_END,
 };
 
-BT_MESH_MODEL_PUB_DEFINE(light_lightness_cli_pub, NULL, 2 + 5);
+BT_MESH_MODEL_PUB_DEFINE(light_lightness_cli_pub, NULL, 2 + 5 + 4);
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 struct bt_mesh_model change_model[] = {
@@ -76,7 +76,7 @@ void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg
     u16_t actual_last             = net_buf_simple_pull_le16(buf);
     light_lightness_cli[0].m_last = actual_last;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Last)\n");
-    printk("Present Lightness = %04x\n", actual_last);
+    printk("Last Lightness = %04x\n", actual_last);
 }
 
 void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -85,7 +85,7 @@ void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_
     u16_t actual_default             = net_buf_simple_pull_le16(buf);
     light_lightness_cli[0].m_default = actual_default;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Default)\n");
-    printk("Lightness = %04x\n", actual_default);
+    printk("Default Lightness = %04x\n", actual_default);
 }
 
 void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -107,9 +107,7 @@ void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message
 {
     struct bt_mesh_model_pub *pub_cli;
     pub_cli = bt_cli->m_model_cli->pub;
-
     printk("Sending get actual message to 0x%04x\n", pub_cli->addr);
-
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
     int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
@@ -176,16 +174,16 @@ void get_all_data()
 {
     send_light_lightness_actual_get(&light_lightness_cli[0],
                                     BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET);
-    // k_sleep(SLEEP_TIME);
+    k_sleep(10000);
 
-    // send_light_lightness_last_get(&light_lightness_cli[0],
-    // BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET); k_sleep(SLEEP_TIME);
+    send_light_lightness_last_get(&light_lightness_cli[0], BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET);
+    k_sleep(10000);
 
-    // send_light_lightness_default_get(&light_lightness_cli[0],
-    //                                  BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET);
-    // k_sleep(SLEEP_TIME);
+    send_light_lightness_default_get(&light_lightness_cli[0],
+                                     BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET);
+    k_sleep(10000);
 
-    // send_light_lightness_range_get(&light_lightness_cli[0],
-    //                                BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET);
-    // k_sleep(SLEEP_TIME);
+    send_light_lightness_range_get(&light_lightness_cli[0],
+                                   BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET);
+    k_sleep(10000);
 }
