@@ -1,7 +1,5 @@
 #include "node_composition.h"
 
-u16_t lightness_cli_state = 0;
-
 struct lightness_cli light_lightness_cli[] = {
     {
         // .leds_cli = &leds,
@@ -11,6 +9,8 @@ struct lightness_cli light_lightness_cli[] = {
     },
 };
 
+u16_t lightness_cli_state = 0;
+
 struct bt_mesh_cfg_srv cfg_srv = {
     .relay        = BT_MESH_RELAY_DISABLED,
     .beacon       = BT_MESH_BEACON_ENABLED,
@@ -18,7 +18,7 @@ struct bt_mesh_cfg_srv cfg_srv = {
     .gatt_proxy   = BT_MESH_GATT_PROXY_ENABLED,
     .default_ttl  = 7,
     .net_transmit = BT_MESH_TRANSMIT(2, 20),
-    //.relay_retransmit = BT_MESH_TRANSMIT(2, 20),
+    .relay_retransmit = BT_MESH_TRANSMIT(2, 20),
 };
 
 static struct bt_mesh_health_srv health_srv = {};
@@ -121,12 +121,12 @@ void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message
 
 void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message_type)
 {
+    u16_t lightness = 50000;
     struct bt_mesh_model_pub *pub_cli;
     pub_cli                    = bt_cli->model_cli->pub;
-    struct net_buf_simple *msg = NET_BUF_SIMPLE(2 + 5 + 4);
     printk("Sending set actual message to 0x%04x\n", pub_cli->addr);
-    bt_mesh_model_msg_init(msg, message_type);
-    net_buf_simple_add_le16(msg, 50000);  // TODO: Alterar para o real
+    bt_mesh_model_msg_init(pub_cli->msg, message_type);
+    net_buf_simple_add_le16(pub_cli->msg, lightness);  // TODO: Alterar para o real
     int err = bt_mesh_model_publish(bt_cli->model_cli);
     if (err) {
         printk("BT MESH MODEL PUB %d message to 0x%04x\n", err, pub_cli->addr);
@@ -154,3 +154,4 @@ void lightness_level_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
     //   printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, pub_cli->addr);
     //}
 }
+

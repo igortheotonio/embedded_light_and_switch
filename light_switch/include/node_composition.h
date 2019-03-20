@@ -17,6 +17,7 @@ struct lightness_cli {
 };
 
 extern struct lightness_cli light_lightness_cli[];
+extern struct bt_mesh_model change_model[];
 extern const struct bt_mesh_comp comp;
 
 /* Light Lightness Client message handlers */

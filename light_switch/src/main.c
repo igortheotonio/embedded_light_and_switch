@@ -29,6 +29,8 @@ void main(void)
         return;
     }
 
+    light_lightness_cli[0].model_cli = &change_model[0];
+
     u16_t brightness = 0;
     while (1) {
         if (encoder.m_position & 0) {
