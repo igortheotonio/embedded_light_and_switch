@@ -56,16 +56,27 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
             button_last_time = time;
             return;
         }
-        send_light_lightness_actual_get(&light_lightness_cli[0],
-                                        BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET);
-        send_light_lightness_default_get(&light_lightness_cli[0],
-                                         BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET);
-        send_light_lightness_range_get(&light_lightness_cli[0],
-                                       BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET);
-        send_light_lightness_actual_set(&light_lightness_cli[0],
-                                        BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+
+        if (light_lightness_cli[0].m_actual == 0) {
+            if (light_lightness_cli[0].m_default == 0) {
+                leds.m_brightness = light_lightness_cli[0].m_last;
+                send_light_lightness_actual_set(&light_lightness_cli[0],
+                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+            } else if (light_lightness_cli[0].m_default == 0xFFFF) {
+                leds.m_brightness = 0xFFFF;
+                send_light_lightness_actual_set(&light_lightness_cli[0],
+                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+            } else {
+                leds.m_brightness = light_lightness_cli[0].m_default;
+                send_light_lightness_actual_set(&light_lightness_cli[0],
+                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+            }
+        } else {
+            leds.m_brightness = 0;
+            send_light_lightness_actual_set(&light_lightness_cli[0],
+                                            BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+        }
         printk("Button pressed!\n");
-        leds_change_state(&leds);
         button_last_time = time;
         break;
     case BIT(ENCODER_CHANNEL_A):

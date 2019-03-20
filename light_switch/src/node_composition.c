@@ -2,10 +2,11 @@
 
 struct lightness_cli light_lightness_cli[] = {
     {
-        .m_default   = 0,
-        .m_actual    = 0,
-        .m_min_range = 0,
-        .m_max_range = 0,
+        .m_actual    = 0x0000,
+        .m_last      = 0x0001,
+        .m_default   = 0x0000,
+        .m_min_range = 0x0001,
+        .m_max_range = 0xFFFF,
         .m_tid       = 0,
     },
 };
@@ -27,6 +28,7 @@ static struct bt_mesh_cfg_cli cfg_cli       = {};
 
 const struct bt_mesh_model_op light_lightness_cli_op[] = {
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS, 2, light_lightness_actual_status},
+    {BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_STATUS, 2, light_lightness_last_status},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_STATUS, 2, light_lightness_default_status},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_STATUS, 5, light_lightness_range_status},
     BT_MESH_MODEL_OP_END,
@@ -62,8 +64,19 @@ void light_lightness_actual_status(struct bt_mesh_model *model, struct bt_mesh_m
 {
     u16_t actual_actual             = net_buf_simple_pull_le16(buf);
     light_lightness_cli[0].m_actual = actual_actual;
+    leds.m_brightness               = actual_actual;
+    leds_brightness(&leds);
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Actual)\n");
     printk("Present Lightness = %04x\n", actual_actual);
+}
+
+void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+                                 struct net_buf_simple *buf)
+{
+    u16_t actual_last             = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_last = actual_last;
+    printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Last)\n");
+    printk("Present Lightness = %04x\n", actual_last);
 }
 
 void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -104,6 +117,20 @@ void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message
     }
 }
 
+void send_light_lightness_last_get(struct lightness_cli *bt_cli, u16_t message_type)
+{
+    struct bt_mesh_model_pub *pub_cli;
+    pub_cli = bt_cli->m_model_cli->pub;
+
+    printk("Sending get last message to 0x%04x\n", pub_cli->addr);
+
+    bt_mesh_model_msg_init(pub_cli->msg, message_type);
+    int err = bt_mesh_model_publish(bt_cli->m_model_cli);
+    if (err) {
+        printk("BT MESH MODEL PUB %d message to 0x%04x\n", err, pub_cli->addr);
+    }
+}
+
 void send_light_lightness_default_get(struct lightness_cli *bt_cli, u16_t message_type)
 {
     struct bt_mesh_model_pub *pub_cli;
@@ -134,14 +161,31 @@ void send_light_lightness_range_get(struct lightness_cli *bt_cli, u16_t message_
 
 void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message_type)
 {
-    u16_t lightness = 50000;
     struct bt_mesh_model_pub *pub_cli;
     pub_cli = bt_cli->m_model_cli->pub;
     printk("Sending set actual message to 0x%04x\n", pub_cli->addr);
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
-    net_buf_simple_add_le16(pub_cli->msg, lightness);  // TODO: Alterar para o real
+    net_buf_simple_add_le16(pub_cli->msg, leds.m_brightness);
     int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
         printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
     }
+}
+
+void get_all_data()
+{
+    send_light_lightness_actual_get(&light_lightness_cli[0],
+                                    BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET);
+    // k_sleep(SLEEP_TIME);
+
+    // send_light_lightness_last_get(&light_lightness_cli[0],
+    // BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET); k_sleep(SLEEP_TIME);
+
+    // send_light_lightness_default_get(&light_lightness_cli[0],
+    //                                  BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET);
+    // k_sleep(SLEEP_TIME);
+
+    // send_light_lightness_range_get(&light_lightness_cli[0],
+    //                                BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET);
+    // k_sleep(SLEEP_TIME);
 }

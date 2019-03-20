@@ -11,8 +11,9 @@
 
 struct lightness_cli {
     struct bt_mesh_model *m_model_cli;
-    u16_t m_default;
     u16_t m_actual;
+    u16_t m_last;
+    u16_t m_default;
     u16_t m_min_range;
     u16_t m_max_range;
     u8_t m_tid;
@@ -45,5 +46,7 @@ void send_light_lightness_default_get(struct lightness_cli *bt_cli, u16_t messag
 void send_light_lightness_range_get(struct lightness_cli *bt_cli, u16_t message_type);
 
 void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message_type);
+
+void get_all_data();
 
 #endif  // _NODE_COMPOSITION_H
