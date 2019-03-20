@@ -10,5 +10,5 @@ file(WRITE ${VERSION_FILE} "${BUILD}")
 
 configure_file (
         "${PROJECT_SOURCE_DIR}/src/version.h.in"
-        "${PROJECT_BINARY_DIR}/include/generated/class3_version.h"
+        "${PROJECT_BINARY_DIR}/include/generated/current_version.h"
     )
