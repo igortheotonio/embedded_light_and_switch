@@ -2,10 +2,11 @@
 
 struct lightness_cli light_lightness_cli[] = {
     {
-        // .leds_cli = &leds,
-        .def = 0,
-        .act = 0,
-        .tid = 0,
+        .m_default   = 0,
+        .m_actual    = 0,
+        .m_min_range = 0,
+        .m_max_range = 0,
+        .m_tid       = 0,
     },
 };
 
@@ -59,35 +60,45 @@ const struct bt_mesh_comp comp = {
 void light_lightness_actual_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                    struct net_buf_simple *buf)
 {
+    u16_t actual_actual             = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_actual = actual_actual;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Actual)\n");
-    printk("Present Lightness = %04x\n", net_buf_simple_pull_le16(buf));
+    printk("Present Lightness = %04x\n", actual_actual);
 }
 
 void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                     struct net_buf_simple *buf)
 {
+    u16_t actual_default             = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_default = actual_default;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Default)\n");
-    printk("Lightness = %04x\n", net_buf_simple_pull_le16(buf));
+    printk("Lightness = %04x\n", actual_default);
 }
 
 void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                   struct net_buf_simple *buf)
 {
+    u8_t status_code                   = net_buf_simple_pull_u8(buf);
+    u16_t actual_min_range             = net_buf_simple_pull_le16(buf);
+    u16_t actual_max_range             = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_min_range = actual_min_range;
+    light_lightness_cli[0].m_max_range = actual_max_range;
+
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Lightness Range)\n");
-    printk("Status Code = %02x\n", net_buf_simple_pull_u8(buf));
-    printk("Range Min = %04x\n", net_buf_simple_pull_le16(buf));
-    printk("Range Max = %04x\n", net_buf_simple_pull_le16(buf));
+    printk("Status Code = %02x\n", status_code);
+    printk("Range Min = %04x\n", actual_min_range);
+    printk("Range Max = %04x\n", actual_max_range);
 }
 
 void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message_type)
 {
     struct bt_mesh_model_pub *pub_cli;
-    pub_cli = bt_cli->model_cli->pub;
+    pub_cli = bt_cli->m_model_cli->pub;
 
     printk("Sending get actual message to 0x%04x\n", pub_cli->addr);
 
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
-    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
         printk("BT MESH MODEL PUB %d message to 0x%04x\n", err, pub_cli->addr);
     }
@@ -96,12 +107,12 @@ void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message
 void send_light_lightness_default_get(struct lightness_cli *bt_cli, u16_t message_type)
 {
     struct bt_mesh_model_pub *pub_cli;
-    pub_cli = bt_cli->model_cli->pub;
+    pub_cli = bt_cli->m_model_cli->pub;
 
     printk("Sending get default message to 0x%04x\n", pub_cli->addr);
 
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
-    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
         printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
     }
@@ -110,12 +121,12 @@ void send_light_lightness_default_get(struct lightness_cli *bt_cli, u16_t messag
 void send_light_lightness_range_get(struct lightness_cli *bt_cli, u16_t message_type)
 {
     struct bt_mesh_model_pub *pub_cli;
-    pub_cli = bt_cli->model_cli->pub;
+    pub_cli = bt_cli->m_model_cli->pub;
 
     printk("Sending get range message to 0x%04x\n", pub_cli->addr);
 
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
-    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
         printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
     }
@@ -125,11 +136,11 @@ void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message
 {
     u16_t lightness = 50000;
     struct bt_mesh_model_pub *pub_cli;
-    pub_cli = bt_cli->model_cli->pub;
+    pub_cli = bt_cli->m_model_cli->pub;
     printk("Sending set actual message to 0x%04x\n", pub_cli->addr);
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
     net_buf_simple_add_le16(pub_cli->msg, lightness);  // TODO: Alterar para o real
-    int err = bt_mesh_model_publish(bt_cli->model_cli);
+    int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
         printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
     }

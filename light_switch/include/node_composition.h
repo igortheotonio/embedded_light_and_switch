@@ -10,11 +10,12 @@
 #include "leds.h"
 
 struct lightness_cli {
-    struct bt_mesh_model *model_cli;
-    // struct leds_device_t *leds_cli;
-    u16_t def;
-    u16_t act;
-    u8_t tid;
+    struct bt_mesh_model *m_model_cli;
+    u16_t m_default;
+    u16_t m_actual;
+    u16_t m_min_range;
+    u16_t m_max_range;
+    u8_t m_tid;
 };
 
 extern struct lightness_cli light_lightness_cli[];

@@ -30,8 +30,8 @@ void main(void)
         return;
     }
 
-    light_lightness_cli[0].model_cli = &change_model[0];
-    u16_t brightness                 = 0;
+    light_lightness_cli[0].m_model_cli = &change_model[0];
+    u16_t brightness                   = 0;
     while (1) {
         if (encoder.m_position) {
             if (leds.m_brightness + 2500 * encoder.m_position > 65535) {
