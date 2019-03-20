@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.8.2)
 
 set(BOARD_ROOT ${CMAKE_SOURCE_DIR}/../)
-set(BOARD nrf52_led_light)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
-project(LED_LIGHT)
+project(BRING_UP_LED_LIGHT)
 
 # Generate version file
 include(build.version.cmake NO_POLICY_SCOPE)
@@ -26,11 +25,11 @@ list(APPEND HEADERS
 
 list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/main.c"
+    "${PROJECT_SOURCE_DIR}/src/firmware_version.c"
     "${PROJECT_SOURCE_DIR}/src/bt_callbacks.c"
     "${PROJECT_SOURCE_DIR}/src/bt_mesh.c"
-    "${PROJECT_SOURCE_DIR}/src/light_lightness_state.c"
     "${PROJECT_SOURCE_DIR}/src/node_composition.c"
-    "${PROJECT_SOURCE_DIR}/src/firmware_version.c"
+    "${PROJECT_SOURCE_DIR}/src/pwm_driver.c"
     )
 
 include_directories(${HEADERS})

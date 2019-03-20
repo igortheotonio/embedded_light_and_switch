@@ -10,12 +10,13 @@
 #define _NODE_COMPOSITION_H_
 
 
-#include "mesh.h"
+#include "bt_callbacks.h"
+#include "bt_mesh.h"
+#include "light_lightness_state.h"
 #include "node_composition.h"
-#include "transition.h"
 
 extern struct bt_mesh_model root_models[];
-extern struct bt_mesh_model node_models[];
+extern struct bt_mesh_model srv_models[];
 
 extern const struct bt_mesh_comp comp;
 

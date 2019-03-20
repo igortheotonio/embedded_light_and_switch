@@ -6,7 +6,11 @@
  * @date 2019-03-06
  */
 
-#include "mesh.h"
+#include "bt_mesh.h"
+
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(BT_MESH, 4);
 
 
 static int output_number(bt_mesh_output_action_t action, u32_t number)
@@ -44,18 +48,15 @@ static const struct bt_mesh_prov prov = {
 
 void bt_ready(int err)
 {
-    struct bt_le_oob oob;
-
     if (err) {
-        printk("Bluetooth init failed (err %d)\n", err);
+        printk("bt_enable init failed with err %d\n", err);
         return;
     }
 
-    printk("Bluetooth initialized\n");
-
+    printk("Bluetooth initialized.\n");
     err = bt_mesh_init(&prov, &comp);
     if (err) {
-        printk("Initializing mesh failed (err %d)\n", err);
+        printk("bt_mesh init failed with err %d\n", err);
         return;
     }
 
@@ -63,14 +64,7 @@ void bt_ready(int err)
         settings_load();
     }
 
-    /* Use identity address as device UUID */
-    if (bt_le_oob_get_local(BT_ID_DEFAULT, &oob)) {
-        printk("Identity Address unavailable\n");
-    } else {
-        memcpy(dev_uuid, oob.addr.a.val, 6);
-    }
-
-    bt_mesh_prov_enable(BT_MESH_PROV_GATT | BT_MESH_PROV_ADV);
-
-    printk("Mesh initialized\n");
+    /* This will be a no-op if settings_load() loaded provisioning info */
+    bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+    printk("Mesh initialized.\n");
 }
