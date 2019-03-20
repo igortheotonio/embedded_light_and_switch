@@ -10,12 +10,15 @@
 
 #define U16_MAX 0xFFFF
 
-#define BT_MESH_MODEL_LIGHT_LIGHTNESS_STATUS BT_MESH_MODEL_OP_2(0x82, 0x4E)
 
 // LINEAR MESSAGES
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_STATUS BT_MESH_MODEL_OP_2(0x82, 0x52)
 
 // ACTUAL MESSAGES
+#define BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET BT_MESH_MODEL_OP_2(0x82, 0x4B)
+#define BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET BT_MESH_MODEL_OP_2(0x82, 0x4C)
+#define BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x4D)
+#define BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS BT_MESH_MODEL_OP_2(0x82, 0x4E)
 
 // RANGE MESSAGES
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_STATUS BT_MESH_MODEL_OP_2(0x82, 0x58)
@@ -46,4 +49,15 @@ void light_lightness_range_set(struct bt_mesh_model *model, struct bt_mesh_msg_c
                                struct net_buf_simple *buf);
 void light_lightness_range_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                      struct net_buf_simple *buf);
+
+
+void light_lightness_actual_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+                                struct net_buf_simple *buf);
+
+void light_lightness_actual_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+                                      struct net_buf_simple *buf);
+
+void light_lightness_actual_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+                                struct net_buf_simple *buf);
+
 #endif

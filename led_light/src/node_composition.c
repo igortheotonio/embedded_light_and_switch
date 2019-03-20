@@ -33,6 +33,8 @@ struct bt_mesh_model root_models[] = {
 struct bt_mesh_model srv_models[] = {
     BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV, light_lightness_setup_srv_op,
                   &light_lightness_srv_pub, &light_lightness_state_data),
+    BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV, light_lightness_srv_op,
+                  &light_lightness_srv_pub, &light_lightness_state_data),
 };
 
 static struct bt_mesh_elem elements[] = {

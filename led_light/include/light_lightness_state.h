@@ -35,6 +35,10 @@ struct light_lightness_state {
     s64_t last_msg_timestamp;
 };
 
+
 extern struct light_lightness_state light_lightness_state_data;
+
+int set_attribute(u16_t x, u16_t y, u16_t message_type);
+
 
 #endif

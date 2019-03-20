@@ -34,7 +34,7 @@ static void prov_reset(void)
     bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
-static u8_t dev_uuid[16] = {0xdd, 0xdd};
+static u8_t dev_uuid[16] = {0x00, 0xdd};
 
 static const struct bt_mesh_prov prov = {
     .uuid           = dev_uuid,
