@@ -8,11 +8,11 @@ LOG_MODULE_REGISTER(BT_CALLBACKS, 4);
 // Operations
 const struct bt_mesh_model_op light_lightness_srv_op[] = {
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_GET, 0, light_lightness_actual_get},
-    {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET, 2, light_lightness_actual_set},
-    {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK, 2, light_lightness_actual_set_unack},
+    {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET, 3, light_lightness_actual_set},
+    {BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK, 3, light_lightness_actual_set_unack},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_GET, 0, light_lightness_linear_get},
-    {BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET, 2, light_lightness_linear_set},
-    {BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK, 2, light_lightness_linear_set_unack},
+    {BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET, 3, light_lightness_linear_set},
+    {BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK, 3, light_lightness_linear_set_unack},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET, 0, light_lightness_default_get},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET, 0, light_lightness_range_get},
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET, 0, light_lightness_last_get},
@@ -27,20 +27,37 @@ const struct bt_mesh_model_op light_lightness_setup_srv_op[] = {
     BT_MESH_MODEL_OP_END,
 };
 
+void light_lightness_linear_broadcast(struct bt_mesh_model *model)
+{
+    int err;
+    struct net_buf_simple *msg          = model->pub->msg;
+    struct light_lightness_state *state = model->user_data;
+
+    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_STATUS);
+    net_buf_simple_add_le16(msg, state->linear);
+
+    err = bt_mesh_model_publish(model);
+    if (err) {
+        LOG_ERR("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, model->pub->addr);
+    } else {
+        LOG_INF("[0x%04x]: Broadcasting linear state: 0x%04x", bt_mesh_model_elem(model)->addr,
+                state->linear);
+    }
+}
+
 
 void light_lightness_linear_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                 struct net_buf_simple *buf)
 {
     LOG_INF("[LINEAR_GET - 0x%04x]: Received a get msg from group address 0x%04x, sent by 0x%04x",
             bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
-    struct bt_mesh_model_pub *pub;
-    pub                                 = model->pub;
     struct light_lightness_state *state = model->user_data;
+    struct net_buf_simple *msg          = NET_BUF_SIMPLE(2 + 5 + 4);
 
-    bt_mesh_model_msg_init(pub->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_STATUS);
-    net_buf_simple_add_le16(pub->msg, state->linear);
+    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_STATUS);
+    net_buf_simple_add_le16(msg, state->linear);
 
-    if (bt_mesh_model_send(model, ctx, pub->msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
         printk("Unable to send LightLightnessAct Status response\n");
     } else {
         LOG_INF("[LINEAR_GET - 0x%04x]: status msg value 0x%04x will be send to 0x%04x",
@@ -56,13 +73,22 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
 
     struct light_lightness_state *state = model->user_data;
     u16_t lightness                     = net_buf_simple_pull_le16(buf);
+    u8_t tid                            = net_buf_simple_pull_u8(buf);
 
-    if (state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK)) {
-        light_lightness_last_get(model, ctx, buf);
-        k_sleep(500);
-        light_lightness_actual_get(model, ctx, buf);
-        k_sleep(500);
+
+    s64_t now = k_uptime_get();
+    if (state->last_tid == tid && state->last_src_addr == ctx->addr
+        && state->last_dst_addr == ctx->recv_dst
+        && (now - state->last_msg_timestamp <= K_SECONDS(6))) {
+        return;
     }
+
+    state->last_tid           = tid;
+    state->last_src_addr      = ctx->addr;
+    state->last_dst_addr      = ctx->recv_dst;
+    state->last_msg_timestamp = now;
+
+    state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK);
     LOG_INF("[LINEAR_SET - 0x%04x]: Value msg: 0x%04x\n", bt_mesh_model_elem(model)->addr,
             lightness);
 }
@@ -72,11 +98,25 @@ void light_lightness_linear_set(struct bt_mesh_model *model, struct bt_mesh_msg_
 {
     light_lightness_linear_set_unack(model, ctx, buf);
     light_lightness_linear_get(model, ctx, buf);
-    int err = bt_mesh_model_publish(model);
+    light_lightness_linear_broadcast(model);
+}
+
+
+void light_lightness_actual_broadcast(struct bt_mesh_model *model)
+{
+    int err;
+    struct net_buf_simple *msg          = model->pub->msg;
+    struct light_lightness_state *state = model->user_data;
+
+    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS);
+    net_buf_simple_add_le16(msg, state->actual);
+
+    err = bt_mesh_model_publish(model);
     if (err) {
-        printk("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, model->pub->addr);
+        LOG_ERR("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, model->pub->addr);
     } else {
-        LOG_INF("[LINEAR_SET - 0x%04x]: Broadcasting...", bt_mesh_model_elem(model)->addr);
+        LOG_INF("[ACTUAL_SET - 0x%04x]: Broadcasting actual state: 0x%04x",
+                bt_mesh_model_elem(model)->addr, state->actual);
     }
 }
 
@@ -85,14 +125,13 @@ void light_lightness_actual_get(struct bt_mesh_model *model, struct bt_mesh_msg_
 {
     LOG_INF("[ACTUAL_GET - 0x%04x]: Received a get msg from group address 0x%04x, sent by 0x%04x",
             bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
-    struct bt_mesh_model_pub *pub;
-    pub                                 = model->pub;
+    struct net_buf_simple *msg          = NET_BUF_SIMPLE(2 + 5 + 4);
     struct light_lightness_state *state = model->user_data;
 
-    bt_mesh_model_msg_init(pub->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS);
-    net_buf_simple_add_le16(pub->msg, state->actual);
+    bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS);
+    net_buf_simple_add_le16(msg, state->actual);
 
-    if (bt_mesh_model_send(model, ctx, pub->msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
         printk("Unable to send LightLightnessAct Status response\n");
     } else {
         LOG_INF("[ACTUAL_GET - 0x%04x]: status msg value 0x%04x will be send to 0x%04x",
@@ -107,14 +146,25 @@ void light_lightness_actual_set_unack(struct bt_mesh_model *model, struct bt_mes
             bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
 
     struct light_lightness_state *state = model->user_data;
-    u16_t lightness                     = net_buf_simple_pull_le16(buf);
+    s64_t now;
+    u8_t tid;
+    u16_t lightness = net_buf_simple_pull_le16(buf);
+    tid             = net_buf_simple_pull_u8(buf);
 
-    if (state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK)) {
-        light_lightness_last_get(model, ctx, buf);
-        k_sleep(500);
-        light_lightness_linear_get(model, ctx, buf);
-        k_sleep(500);
+    now = k_uptime_get();
+    if (state->last_tid == tid && state->last_src_addr == ctx->addr
+        && state->last_dst_addr == ctx->recv_dst
+        && (now - state->last_msg_timestamp <= K_SECONDS(6))) {
+        return;
     }
+
+    state->last_tid           = tid;
+    state->last_src_addr      = ctx->addr;
+    state->last_dst_addr      = ctx->recv_dst;
+    state->last_msg_timestamp = now;
+
+
+    state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK);
     LOG_INF("[ACTUAL_SET - 0x%04x]: Value msg: 0x%04x\n", bt_mesh_model_elem(model)->addr,
             lightness);
 }
@@ -124,12 +174,7 @@ void light_lightness_actual_set(struct bt_mesh_model *model, struct bt_mesh_msg_
 {
     light_lightness_actual_set_unack(model, ctx, buf);
     light_lightness_actual_get(model, ctx, buf);
-    int err = bt_mesh_model_publish(model);
-    if (err) {
-        LOG_ERR("bt_mesh_model_publish err %d, sending msg to 0x%04x\n", err, model->pub->addr);
-    } else {
-        LOG_INF("[ACTUAL_SET - 0x%04x]: Broadcasting...", bt_mesh_model_elem(model)->addr);
-    }
+    light_lightness_actual_broadcast(model);
 }
 
 
