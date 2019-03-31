@@ -2,6 +2,9 @@
 
 #include <logging/log.h>
 
+#include "light_lightness_state.h"
+#include "pwm_driver.h"
+
 
 LOG_MODULE_REGISTER(BT_CALLBACKS, 4);
 
@@ -26,6 +29,11 @@ const struct bt_mesh_model_op light_lightness_setup_srv_op[] = {
     {BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_SET_UNACK, 5, light_lightness_range_set_unack},
     BT_MESH_MODEL_OP_END,
 };
+
+u16_t actual_to_pulse_width(u16_t actual)
+{
+    return (u16_t)((actual - U16_MIN) * (PERIOD - 0) / (U16_MAX - U16_MIN) + 0);
+}
 
 void light_lightness_linear_broadcast(struct bt_mesh_model *model)
 {
@@ -83,6 +91,8 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
         return;
     }
 
+    blink_light(&pwm, 3);
+
     state->last_tid           = tid;
     state->last_src_addr      = ctx->addr;
     state->last_dst_addr      = ctx->recv_dst;
@@ -93,6 +103,9 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
 
     if (state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK)) {
         LOG_INF("Invalid lightness");
+    } else {
+        change_pulse_width(&pwm, actual_to_pulse_width(state->actual));
+        set_pulse_width(&pwm);
     }
 }
 
@@ -167,11 +180,15 @@ void light_lightness_actual_set_unack(struct bt_mesh_model *model, struct bt_mes
     state->last_src_addr      = ctx->addr;
     state->last_dst_addr      = ctx->recv_dst;
     state->last_msg_timestamp = now;
-
-
-    state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK);
     LOG_INF("[ACTUAL_SET - 0x%04x]: Value msg: 0x%04x\n", bt_mesh_model_elem(model)->addr,
             lightness);
+
+    if (state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET_UNACK)) {
+        LOG_INF("Invalid lightness");
+    } else {
+        change_pulse_width(&pwm, actual_to_pulse_width(state->actual));
+        set_pulse_width(&pwm);
+    }
 }
 
 void light_lightness_actual_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,

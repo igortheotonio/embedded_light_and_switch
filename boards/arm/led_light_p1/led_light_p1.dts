@@ -58,7 +58,7 @@
 &pwm0 {
 	status = "ok";
 	ch0-pin = <8>;
-	ch0-inverted;
+	/*ch0-inverted;*/
 };
 
 &flash0 {

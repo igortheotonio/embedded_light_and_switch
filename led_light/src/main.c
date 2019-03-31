@@ -22,10 +22,6 @@ LOG_MODULE_REGISTER(MAIN, 4);
 
 pwm_driver_t pwm = {0};
 
-u16_t actual_to_pulse_width(u16_t actual)
-{
-    return (u16_t)((actual - U16_MIN) * (PERIOD - 0) / (U16_MAX - U16_MIN) + 0);
-}
 
 int configure_board()
 {
@@ -57,8 +53,6 @@ void main(void)
     }
 
     while (1) {
-        change_pulse_width(&pwm, actual_to_pulse_width(light_lightness_state_data.actual));
-        set_pulse_width(&pwm);
         k_sleep(SLEEP_TIME);
     }
 }

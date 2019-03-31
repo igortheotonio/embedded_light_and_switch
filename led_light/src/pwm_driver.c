@@ -69,18 +69,19 @@ void blink_light(pwm_driver_t *pwm_driver, u32_t number)
     if (pwm_driver->pulse_width) {
         for (int i = 0; i < number; i++) {
             pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period, 0);
-            k_sleep(500);
+            k_sleep(1000);
             pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period,
                              pwm_driver->period);
-            k_sleep(500);
+            k_sleep(1000);
         }
     } else {
         for (int i = 0; i < number; i++) {
             pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period,
                              pwm_driver->period);
-            k_sleep(500);
+            k_sleep(1000);
             pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period, 0);
-            k_sleep(500);
+            k_sleep(1000);
         }
     }
+    set_pulse_width(pwm_driver);
 }

@@ -5,8 +5,6 @@
 #include <bluetooth/mesh.h>
 #include <settings/settings.h>
 
-#include "light_lightness_state.h"
-
 
 // LINEAR MESSAGES
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_STATUS BT_MESH_MODEL_OP_2(0x82, 0x52)
