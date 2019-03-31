@@ -10,8 +10,8 @@
 
 #define PWM_CHANNEL0 LED0_GPIO_PIN
 
-#define PERIOD (USEC_PER_SEC / 50)
-#define FADESTEP 2000
+#define PERIOD 20  // 50kHz
+#define FADESTEP 2
 
 typedef struct {
     u8_t pin;
@@ -22,8 +22,11 @@ typedef struct {
 
 } pwm_driver_t;
 
+extern pwm_driver_t pwm;
+
 int init_pwm_driver(pwm_driver_t *pwm, const char *pwm_label, u8_t pin, u16_t period);
 int change_pulse_width(pwm_driver_t *pwm, u16_t pulse_width);
 int set_pulse_width(pwm_driver_t *pwm);
+void blink_light(pwm_driver_t *pwm_driver, u32_t number);
 
 #endif

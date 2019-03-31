@@ -100,10 +100,10 @@ int set_attribute(u16_t x, u16_t y, u16_t message_type)
 
 struct light_lightness_state light_lightness_state_data = {
     .set_attribute = set_attribute,
-    .actual        = 0x000B,
-    .linear        = 0,
-    .last          = 0x00AA,
-    .range_max     = U16_MAX / 2,
+    .actual        = 0x0000,
+    .linear        = 0x0000,
+    .last          = 0xFFFF,
+    .range_max     = U16_MAX,
     .range_min     = 0x0001,
     .def           = 0x0000,
     .status_code   = 0x00,

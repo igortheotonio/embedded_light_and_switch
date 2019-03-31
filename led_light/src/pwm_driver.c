@@ -2,7 +2,7 @@
 
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(PWM_LED, 2);
+LOG_MODULE_REGISTER(PWM_LED, 4);
 
 int init_pwm_driver(pwm_driver_t *pwm_driver, const char *pwm_label, u8_t pin, u16_t period)
 {
@@ -40,9 +40,11 @@ int change_pulse_width(pwm_driver_t *pwm_driver, u16_t pulse_width)
         return -EINVAL;
     }
 
-    LOG_DBG("Change pulseWidth to: %d", pulse_width);
+    if (pwm_driver->pulse_width != pulse_width) {
+        pwm_driver->pulse_width = pulse_width;
+        LOG_DBG("Change pulseWidth to: %d", pulse_width);
+    }
 
-    pwm_driver->pulse_width = pulse_width;
     return 0;
 }
 
@@ -52,7 +54,7 @@ int set_pulse_width(pwm_driver_t *pwm_driver)
         LOG_ERR("pwm driver was not initiated.");
         return -ENODEV;
     }
-    LOG_DBG("<Pin %d> - Setting pulseWidth to: %d", pwm_driver->pin, pwm_driver->pulse_width);
+    /*LOG_DBG("<Pin %d> - Setting pulseWidth to: %d", pwm_driver->pin, pwm_driver->pulse_width);*/
     int err = pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period,
                                pwm_driver->pulse_width);
     if (err) {
@@ -60,4 +62,25 @@ int set_pulse_width(pwm_driver_t *pwm_driver)
         return err;
     }
     return 0;
+}
+
+void blink_light(pwm_driver_t *pwm_driver, u32_t number)
+{
+    if (pwm_driver->pulse_width) {
+        for (int i = 0; i < number; i++) {
+            pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period, 0);
+            k_sleep(500);
+            pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period,
+                             pwm_driver->period);
+            k_sleep(500);
+        }
+    } else {
+        for (int i = 0; i < number; i++) {
+            pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period,
+                             pwm_driver->period);
+            k_sleep(500);
+            pwm_pin_set_usec(pwm_driver->dev, pwm_driver->pin, pwm_driver->period, 0);
+            k_sleep(500);
+        }
+    }
 }

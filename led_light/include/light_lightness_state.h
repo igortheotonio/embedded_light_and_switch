@@ -17,6 +17,10 @@
 #define MINDIFF 2.25e-308
 #define LIGHT_OFF 0x0000
 
+#define U16_MAX 0xFFFF
+#define U16_MIN 0x0000
+#define U16_NULL 0x0000
+
 typedef int (*set_attribute_t)(u16_t x, u16_t y, u16_t message_type);
 
 struct light_lightness_state {
@@ -40,7 +44,6 @@ struct light_lightness_state {
     s64_t last_msg_timestamp;
     set_attribute_t set_attribute;
 };
-
 
 extern struct light_lightness_state light_lightness_state_data;
 

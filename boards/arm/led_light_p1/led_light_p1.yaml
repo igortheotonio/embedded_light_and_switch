@@ -1,0 +1,13 @@
+identifier: led_light_p1
+name: LED_LIGHT_P1
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 64
+flash: 512
+supported:
+  - adc
+  - nvs

@@ -88,9 +88,12 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
     state->last_dst_addr      = ctx->recv_dst;
     state->last_msg_timestamp = now;
 
-    state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK);
     LOG_INF("[LINEAR_SET - 0x%04x]: Value msg: 0x%04x\n", bt_mesh_model_elem(model)->addr,
             lightness);
+
+    if (state->set_attribute(lightness, U16_NULL, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET_UNACK)) {
+        LOG_INF("Invalid lightness");
+    }
 }
 
 void light_lightness_linear_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -127,6 +130,8 @@ void light_lightness_actual_get(struct bt_mesh_model *model, struct bt_mesh_msg_
             bt_mesh_model_elem(model)->addr, ctx->recv_dst, ctx->addr);
     struct net_buf_simple *msg          = NET_BUF_SIMPLE(2 + 5 + 4);
     struct light_lightness_state *state = model->user_data;
+
+    printk("0x%04x \n", model->pub->addr);
 
     bt_mesh_model_msg_init(msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_STATUS);
     net_buf_simple_add_le16(msg, state->actual);
