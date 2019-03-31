@@ -57,26 +57,20 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
             return;
         }
 
-        get_all_data();
-
-        if (light_lightness_cli[0].m_actual == 0) {
+        if (light_lightness_cli[0].m_linear == 0) {
             if (light_lightness_cli[0].m_default == 0) {
                 leds.m_brightness = light_lightness_cli[0].m_last;
-                send_light_lightness_actual_set(&light_lightness_cli[0],
-                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+                send_light_lightness_linear_set(&light_lightness_cli[0]);
             } else if (light_lightness_cli[0].m_default == 0xFFFF) {
                 leds.m_brightness = 0xFFFF;
-                send_light_lightness_actual_set(&light_lightness_cli[0],
-                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+                send_light_lightness_linear_set(&light_lightness_cli[0]);
             } else {
                 leds.m_brightness = light_lightness_cli[0].m_default;
-                send_light_lightness_actual_set(&light_lightness_cli[0],
-                                                BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+                send_light_lightness_linear_set(&light_lightness_cli[0]);
             }
         } else {
             leds.m_brightness = 0;
-            send_light_lightness_actual_set(&light_lightness_cli[0],
-                                            BT_MESH_MODEL_LIGHT_LIGHTNESS_ACTUAL_SET);
+            send_light_lightness_linear_set(&light_lightness_cli[0]);
         }
         printk("Button pressed!\n");
         button_last_time = time;

@@ -19,7 +19,7 @@ endif # ADC
 if I2C
 
 config I2C_0
-	default n
+	default y
 
 endif # I2C
 

@@ -11,7 +11,7 @@
 
 struct lightness_cli {
     struct bt_mesh_model *m_model_cli;
-    u16_t m_actual;
+    u16_t m_linear;
     u16_t m_last;
     u16_t m_default;
     u16_t m_min_range;
@@ -24,9 +24,6 @@ extern struct bt_mesh_model change_model[];
 extern const struct bt_mesh_comp comp;
 
 /* Light Lightness Client message handlers */
-void light_lightness_actual_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-                                   struct net_buf_simple *buf);
-
 void light_lightness_linear_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                    struct net_buf_simple *buf);
 
@@ -39,13 +36,9 @@ void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_
 void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                   struct net_buf_simple *buf);
 
-void send_light_lightness_actual_get(struct lightness_cli *bt_cli, u16_t message_type);
+void send_light_lightness_get(struct lightness_cli *bt_cli, u32_t message_type);
 
-void send_light_lightness_default_get(struct lightness_cli *bt_cli, u16_t message_type);
-
-void send_light_lightness_range_get(struct lightness_cli *bt_cli, u16_t message_type);
-
-void send_light_lightness_actual_set(struct lightness_cli *bt_cli, u16_t message_type);
+void send_light_lightness_linear_set(struct lightness_cli *bt_cli);
 
 void get_all_data();
 

@@ -67,7 +67,8 @@ int leds_brightness(leds_device_t *leds_device)
 
     u8_t leds_brightness   = 100 * (leds.m_brightness / MAX_BRIGHTNESS);
     u8_t number_of_leds_on = (leds_brightness / LED_BRIGHTNESS_PART);
-    printk("Luminosidade da struct %d Percentual %d \n", leds.m_brightness, leds_brightness);
+    printk("Luminosidade da struct %d Percentual %d  e leds %d \n", leds.m_brightness,
+           leds_brightness, number_of_leds_on);
 
     for (int i = 0; i < number_of_leds_on; i++) {
         gpio_pin_write(leds_device->m_device, leds_pins[i], LED_ON);
