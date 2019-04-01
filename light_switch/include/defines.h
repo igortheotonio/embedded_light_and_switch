@@ -51,7 +51,7 @@
     # Defines of encoder
 */
 
-#define INITIAL_STATE 3
+#define INITIAL_STATE 0
 #define INITIAL_POSITION 0
 #define SIZE_ONE_STATE 1
 #define SIZE_TWO_STATE 2

@@ -18,7 +18,7 @@ typedef struct {
     struct device *m_device;
     struct gpio_callback m_device_cb;
     u8_t m_initiated;
-    u8_t m_state;
+    u16_t m_state;
     s8_t m_position;
 } encoder_device_t;
 

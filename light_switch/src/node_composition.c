@@ -142,7 +142,7 @@ void send_light_lightness_linear_set(struct lightness_cli *bt_cli)
 {
     struct bt_mesh_model_pub *pub_cli;
     pub_cli = bt_cli->m_model_cli->pub;
-    printk("Sending set linear message to 0x%04x\n", pub_cli->addr);
+    printk("Sending set linear message 0x%04x to 0x%04x\n", leds.m_brightness, pub_cli->addr);
     bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET);
     net_buf_simple_add_le16(pub_cli->msg, leds.m_brightness);
     net_buf_simple_add_u8(pub_cli->msg, bt_cli->m_tid++);

@@ -3,6 +3,7 @@
 static u32_t time, button_last_time;
 static const u32_t encoder_pins[] = {BUTTON, ENCODER_CHANNEL_A, ENCODER_CHANNEL_B};
 
+
 int encoder_init(encoder_device_t *encoder_device)
 {
     if (!encoder_device) {
@@ -80,12 +81,33 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
     case BIT(ENCODER_CHANNEL_A) | BIT(ENCODER_CHANNEL_B):
         gpio_pin_read(encoder_device, ENCODER_CHANNEL_A, &a_state);
         gpio_pin_read(encoder_device, ENCODER_CHANNEL_B, &b_state);
-        u8_t new_state = a_state | (b_state << SIZE_ONE_STATE);
-        if (encoder.m_state != new_state) {
-            encoder.m_position += encoder_diretion[new_state | (encoder.m_state << SIZE_TWO_STATE)];
-            encoder.m_state = new_state;
+        if (a_state == b_state) {
+            encoder.m_position++;
+        } else {
+            encoder.m_position--;
         }
+        /*printk("m_state: 0x%04x\n", encoder.m_state);*/
+        /*printk("a_state: 0x%02x\n", a_state);*/
+        /*printk("b_state: 0x%02x\n", b_state);*/
+        /*if (encoder.m_state == 0xf000) {*/
+        /*encoder.m_state = 0x0000;*/
+        /*if (b_state) {*/
+        /*printk("Position mais %d\n", encoder.m_position);*/
+
+        /*encoder.m_position++;*/
+        /*} else {*/
+        /*printk("Position menos %d\n", encoder.m_position);*/
+        /*encoder.m_position--;*/
+        /*}*/
+        /*}*/
+
         printk("Position %d\n", encoder.m_position);
+
+
+        /*if (encoder.m_state != new_state) {*/
+        /*encoder.m_position += encoder_diretion[new_state | (encoder.m_state << SIZE_TWO_STATE)];*/
+        /*encoder.m_state = new_state;*/
+        /*}*/
         break;
     default:
         printk("Invalid state\n");

@@ -77,17 +77,18 @@ void main(void)
         /*gpio_pin_read(encoder.m_device, ENCODER_CHANNEL_B, &data);*/
         /*printk("data B: %d\n", data);*/
         if (encoder.m_position) {
-            if (leds.m_brightness + 2500 * encoder.m_position > 65535) {
+            if (leds.m_brightness + 3277 * encoder.m_position > 65535) {
                 brightness = 65535;
-            } else if (leds.m_brightness + 2500 * encoder.m_position < 0) {
+            } else if (leds.m_brightness + 3277 * encoder.m_position < 0) {
                 brightness = 0;
             } else {
-                brightness = leds.m_brightness + 2500 * encoder.m_position;
+                brightness = leds.m_brightness + 3277 * encoder.m_position;
             }
+            leds.m_brightness = brightness;
             printk("Change value to %d\n", brightness);
             encoder.m_position = 0;
-            leds_brightness(&leds);
+            send_light_lightness_linear_set(&light_lightness_cli[0]);
         }
-        k_sleep(1);
+        k_sleep(K_MSEC(250));
     }
 }
