@@ -11,6 +11,7 @@
 
 struct lightness_cli {
     struct bt_mesh_model *m_model_cli;
+    u8_t received_msg;
     u16_t m_linear;
     u16_t m_last;
     u16_t m_default;

@@ -2,12 +2,13 @@
 
 struct lightness_cli light_lightness_cli[] = {
     {
-        .m_linear    = 0x0000,
-        .m_last      = 0xFFFF,
-        .m_default   = 0x0000,
-        .m_min_range = 0x0001,
-        .m_max_range = 0xFFFF,
-        .m_tid       = 0,
+        .m_linear     = 0x0000,
+        .m_last       = 0xFFFF,
+        .m_default    = 0x0000,
+        .m_min_range  = 0x0001,
+        .m_max_range  = 0xFFFF,
+        .m_tid        = 0,
+        .received_msg = 0,
     },
 };
 
@@ -66,6 +67,7 @@ void light_lightness_linear_status(struct bt_mesh_model *model, struct bt_mesh_m
     light_lightness_cli[0].m_linear = linear;
     leds.m_brightness               = linear;
     leds_brightness(&leds);
+    light_lightness_cli[0].received_msg = 2;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Linear)\n");
     printk("Present Lightness = %04x\n", linear);
 }
@@ -73,8 +75,9 @@ void light_lightness_linear_status(struct bt_mesh_model *model, struct bt_mesh_m
 void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                  struct net_buf_simple *buf)
 {
-    u16_t actual_last             = net_buf_simple_pull_le16(buf);
-    light_lightness_cli[0].m_last = actual_last;
+    u16_t actual_last                   = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_last       = actual_last;
+    light_lightness_cli[0].received_msg = 2;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Last)\n");
     printk("Last Lightness = %04x\n", actual_last);
 }
@@ -82,8 +85,9 @@ void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg
 void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
                                     struct net_buf_simple *buf)
 {
-    u16_t actual_default             = net_buf_simple_pull_le16(buf);
-    light_lightness_cli[0].m_default = actual_default;
+    u16_t actual_default                = net_buf_simple_pull_le16(buf);
+    light_lightness_cli[0].m_default    = actual_default;
+    light_lightness_cli[0].received_msg = 2;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Default)\n");
     printk("Default Lightness = %04x\n", actual_default);
 }
@@ -97,6 +101,7 @@ void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_ms
     light_lightness_cli[0].m_min_range = actual_min_range;
     light_lightness_cli[0].m_max_range = actual_max_range;
 
+    light_lightness_cli[0].received_msg = 2;
     printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Lightness Range)\n");
     printk("Status Code = %02x\n", status_code);
     printk("Range Min = %04x\n", actual_min_range);

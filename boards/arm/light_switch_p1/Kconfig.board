@@ -4,6 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-config  BOARD_NRF52_LIGHT_SWITCH
-	bool "nRF52-LIGHT_SWITCH"
+config  BOARD_LIGHT_SWITCH_P1
+	bool "LIGHT_SWITCH_P1"
 	depends on SOC_NRF52832_QFAA

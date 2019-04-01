@@ -1,12 +1,12 @@
-.. _nrf52_light_switch:
+.. _light_switch_p1:
 
-nRF52-LIGHT_SWITCH
+LIGHT_SWITCH_P1
 ##############
 
 Overview
 ********
 
-Zephyr applications use the nrf52_light_switch board configuration
+Zephyr applications use the light_switch_p1 board configuration
 to run on the nRF52 Development Kit (PCA10040) hardware. It provides
 support for the Nordic Semiconductor nRF52832 ARM Cortex-M4F CPU and
 the following devices:
