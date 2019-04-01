@@ -91,7 +91,7 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
         return;
     }
 
-    blink_light(&pwm, 3);
+    /*blink_light(&pwm, 3);*/
 
     state->last_tid           = tid;
     state->last_src_addr      = ctx->addr;
