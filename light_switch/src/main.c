@@ -70,6 +70,8 @@ void main(void)
 
     u32_t data = 0;
     while (1) {
+        /*gpio_pin_read(encoder.m_device, BUTTON, &data);*/
+        /*printk("data botao: %d\n", data);*/
         /*gpio_pin_read(encoder.m_device, ENCODER_CHANNEL_A, &data);*/
         /*printk("data A: %d\n", data);*/
         /*gpio_pin_read(encoder.m_device, ENCODER_CHANNEL_B, &data);*/
@@ -86,6 +88,6 @@ void main(void)
             encoder.m_position = 0;
             leds_brightness(&leds);
         }
-        k_sleep(250);
+        k_sleep(1);
     }
 }

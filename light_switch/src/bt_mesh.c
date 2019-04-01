@@ -1,6 +1,6 @@
 #include "bt_mesh.h"
 
-static u8_t dev_uuid[16] = {0xda, 0xdd};
+static u8_t dev_uuid[16] = {0xda, 0xda};
 
 const struct bt_mesh_prov prov = {
     .uuid           = dev_uuid,

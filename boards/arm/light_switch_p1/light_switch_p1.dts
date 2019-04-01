@@ -49,15 +49,15 @@
 	buttons {
 		compatible = "gpio-keys";
 		button0: button_0 {
-			gpios = <&gpio0 8 GPIO_PUD_PULL_UP>;
+			gpios = <&gpio0 8 GPIO_PUD_NORMAL>;
 			label = "BUTTON";
 		};	
 		button1: button_1 {
-			gpios = <&gpio0 9 GPIO_PUD_PULL_UP>;
+			gpios = <&gpio0 9 GPIO_PUD_NORMAL>;
 			label = "CHANNEL_A";
 		};
 		button2: button_2 {
-			gpios = <&gpio0 10 GPIO_PUD_PULL_UP>;
+			gpios = <&gpio0 10 GPIO_PUD_NORMAL>;
 			label = "CHANNEL_B";
 		};
 	};

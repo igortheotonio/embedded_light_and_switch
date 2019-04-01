@@ -15,7 +15,7 @@ struct lightness_cli light_lightness_cli[] = {
 u16_t lightness_cli_state = 0;
 
 struct bt_mesh_cfg_srv cfg_srv = {
-    .relay            = BT_MESH_RELAY_DISABLED,
+    .relay            = BT_MESH_RELAY_ENABLED,
     .beacon           = BT_MESH_BEACON_DISABLED,
     .frnd             = BT_MESH_FRIEND_NOT_SUPPORTED,
     .gatt_proxy       = BT_MESH_GATT_PROXY_ENABLED,
