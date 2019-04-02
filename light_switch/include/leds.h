@@ -10,8 +10,6 @@
 #include "defines.h"
 #include "node_composition.h"
 
-// LOG_MODULE_REGISTER(LEDS);
-
 typedef struct {
     struct device *m_device;
     u16_t m_brightness;
