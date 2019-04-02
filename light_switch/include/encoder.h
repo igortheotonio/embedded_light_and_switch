@@ -8,10 +8,11 @@
 #include <zephyr/types.h>
 
 #include "defines.h"
+#include "functions.h"
 #include "leds.h"
 #include "node_composition.h"
 
-static const u8_t encoder_diretion[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+static const s8_t encoder_diretion[] = {1, -1, -1, 1};
 
 // Encoder device struct
 typedef struct {
