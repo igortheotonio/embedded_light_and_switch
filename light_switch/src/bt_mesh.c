@@ -1,5 +1,7 @@
 #include "bt_mesh.h"
 
+LOG_MODULE_REGISTER(BT_MESH);
+
 static u8_t dev_uuid[16] = {0xda, 0xda};
 
 const struct bt_mesh_prov prov = {
@@ -13,31 +15,34 @@ const struct bt_mesh_prov prov = {
 
 int output_number(bt_mesh_output_action_t action, u32_t number)
 {
+    LOG_WRN("OOB Number: %u", number);
     printk("OOB Number: %u\n", number);
     return 0;
 }
 
 void prov_complete(u16_t net_idx, u16_t addr)
 {
-    printk("Provisioning was completed.\n");
+    LOG_INF("PROVISIONING WAS COMPLETED");
 }
 
 void prov_reset(void)
 {
+    LOG_INF("PROVISION RESET");
     bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
 void bt_ready(int err)
 {
+    LOG_INF("BT MESH INIT");
+
     if (err) {
-        printk("bt_enable init failed with err %d\n", err);
+        LOG_ERR("BT MESH INIT FAILD ERR: %d", err);
         return;
     }
 
-    printk("Bluetooth initialized.\n");
     err = bt_mesh_init(&prov, &comp);
     if (err) {
-        printk("bt_mesh init failed with err %d\n", err);
+        LOG_ERR("BT MESH INIT FAILED WITH ERR: %d", err);
         return;
     }
 
@@ -45,7 +50,6 @@ void bt_ready(int err)
         settings_load();
     }
 
-    /* This will be a no-op if settings_load() loaded provisioning info */
     bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
-    printk("Mesh initialized.\n");
+    LOG_INF("FINISH BT MESH INIT");
 }
