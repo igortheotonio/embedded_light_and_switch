@@ -106,6 +106,7 @@ void light_lightness_linear_set_unack(struct bt_mesh_model *model, struct bt_mes
     } else {
         change_pulse_width(&pwm, actual_to_pulse_width(state->actual));
         set_pulse_width(&pwm);
+        light_lightness_last_get(model, ctx, buf);
     }
 }
 
