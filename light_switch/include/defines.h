@@ -1,3 +1,6 @@
+#ifndef _DEFINES_H
+#define _DEFINES_H
+
 /*
     # Defines of inputs
 */
@@ -38,8 +41,8 @@
 
 #define STANDARD_LED GPIO_DIR_OUT | GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_HIGH
 #define NUMBER_OF_BLINKS 5
-#define MAX_BRIGHTNESS 65535.0
-#define MIN_BRIGHTNESS 0.0
+#define MAX_BRIGHTNESS 65535
+#define MIN_BRIGHTNESS 0
 #define NUMBER_OF_LEDS 5
 #define LED_BRIGHTNESS_PART (100 / NUMBER_OF_LEDS)
 #define LED_ON 0
@@ -55,6 +58,8 @@
 #define INITIAL_POSITION 0
 #define SIZE_ONE_STATE 1
 #define SIZE_TWO_STATE 2
+#define STEP_ENC 3277
+
 /*
     # Defines of timers
 */
@@ -77,3 +82,5 @@
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_GET BT_MESH_MODEL_OP_2(0x82, 0x4F)
 
 #define BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET BT_MESH_MODEL_OP_2(0x82, 0x50)
+
+#endif  // _DEFINES_H
