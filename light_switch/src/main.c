@@ -7,7 +7,6 @@
 #include "encoder.h"
 #include "firmware_version.h"
 #include "leds.h"
-#include "node_composition.h"
 
 LOG_MODULE_REGISTER(MAIN);
 
@@ -21,7 +20,6 @@ u32_t messages_types[] = {
     BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_GET, BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET};
 
 struct k_timer timer_counter;
-
 
 void counter_handler(struct k_timer *timer_id)
 {
@@ -43,52 +41,46 @@ void counter_handler(struct k_timer *timer_id)
     }
 }
 
-
 void main(void)
 {
-    printk("Firmware version: %d.%d.%d\n", version_get_major(), version_get_minor(),
-           version_get_build());
-    int err;
-    leds_init_and_configure(&leds);
+    int err = 0;
 
+    // Firmware version
+    LOG_WRN("FIRMWARE VERSION: %d.%d.%d\n", version_get_major(), version_get_minor(),
+            version_get_build());
+
+    // Init leds
+    err = leds_init_and_configure(&leds);
+
+    if (err) {
+        LOG_ERR("LEDS ERROR: %d", err);
+        return;
+    }
+
+    // Init bluetooh
     light_lightness_cli[0].m_model_cli  = &change_model[0];
     light_lightness_cli[0].received_msg = 0;
 
     err = bt_enable(bt_ready);
     if (err) {
-        printk("bt_enable failed with err %d\n", err);
+        LOG_ERR("BLUETOOTH ERROR: %d", err);
         return;
     }
 
+    // Get status in mesh
     k_timer_init(&timer_counter, counter_handler, NULL);
     k_timer_start(&timer_counter, 200, 200);
 
-    encoder_init_and_configure(&encoder);
+    // Init encoder
+    err = encoder_init_and_configure(&encoder);
 
-    u16_t brightness = 0;
+    if (err) {
+        LOG_ERR("ENCODER ERROR: %d", err);
+        return;
+    }
 
-
-    u32_t data = 0;
+    // LOOP
     while (1) {
-        /*gpio_pin_read(encoder.m_device, BUTTON, &data);*/
-        /*printk("data botao: %d\n", data);*/
-        /*gpio_pin_read(encoder.m_device, ENCODER_CHANNEL_A, &data);*/
-        /*printk("data A: %d\n", data);*/
-        /*gpio_pin_read(encoder.m_device, ENCODER_CHANNEL_B, &data);*/
-        /*printk("data B: %d\n", data);*/
-        if (encoder.m_position) {
-            if (leds.m_brightness + 3277 * encoder.m_position > 65535) {
-                brightness = 65535;
-            } else if (leds.m_brightness + 3277 * encoder.m_position < 0) {
-                brightness = 0;
-            } else {
-                brightness = leds.m_brightness + 3277 * encoder.m_position;
-            }
-            leds.m_brightness = brightness;
-            printk("Change value to %d\n", brightness);
-            encoder.m_position = 0;
-            send_light_lightness_linear_set(&light_lightness_cli[0]);
-        }
-        k_sleep(K_MSEC(250));
+        k_sleep(K_MSEC(SLEEP_TIME));
     }
 }
