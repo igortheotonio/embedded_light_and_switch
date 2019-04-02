@@ -1,5 +1,7 @@
 #include "node_composition.h"
 
+LOG_MODULE_REGISTER(NODE_COMPOSITION);
+
 struct lightness_cli light_lightness_cli[] = {
     {
         .m_linear     = 0x0000,
@@ -68,8 +70,7 @@ void light_lightness_linear_status(struct bt_mesh_model *model, struct bt_mesh_m
     leds.m_brightness               = linear;
     leds_brightness(&leds);
     light_lightness_cli[0].received_msg = 2;
-    printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Linear)\n");
-    printk("Present Lightness = %04x\n", linear);
+    LOG_INF("Present Lightness = %04x", linear);
 }
 
 void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -78,8 +79,7 @@ void light_lightness_last_status(struct bt_mesh_model *model, struct bt_mesh_msg
     u16_t actual_last                   = net_buf_simple_pull_le16(buf);
     light_lightness_cli[0].m_last       = actual_last;
     light_lightness_cli[0].received_msg = 2;
-    printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Last)\n");
-    printk("Last Lightness = %04x\n", actual_last);
+    LOG_INF("Last Lightness = %04x", actual_last);
 }
 
 void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -88,8 +88,7 @@ void light_lightness_default_status(struct bt_mesh_model *model, struct bt_mesh_
     u16_t actual_default                = net_buf_simple_pull_le16(buf);
     light_lightness_cli[0].m_default    = actual_default;
     light_lightness_cli[0].received_msg = 2;
-    printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Default)\n");
-    printk("Default Lightness = %04x\n", actual_default);
+    LOG_INF("DEFAULT LIGHTNESS = %04x", actual_default);
 }
 
 void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -102,10 +101,9 @@ void light_lightness_range_status(struct bt_mesh_model *model, struct bt_mesh_ms
     light_lightness_cli[0].m_max_range = actual_max_range;
 
     light_lightness_cli[0].received_msg = 2;
-    printk("Acknownledgement from LIGHT_LIGHTNESS_SRV (Lightness Range)\n");
-    printk("Status Code = %02x\n", status_code);
-    printk("Range Min = %04x\n", actual_min_range);
-    printk("Range Max = %04x\n", actual_max_range);
+    LOG_INF("STATUS CODE = %02x", status_code);
+    LOG_INF("RANGE MIN = %04x", actual_min_range);
+    LOG_INF("RANGE MAX = %04x", actual_max_range);
 }
 
 
@@ -116,16 +114,16 @@ void send_light_lightness_get(struct lightness_cli *bt_cli, u32_t message_type)
 
     switch (message_type) {
     case BT_MESH_MODEL_LIGHT_LIGHTNESS_RANGE_GET:
-        printk("Sending range get message to 0x%04x\n", pub_cli->addr);
+        LOG_INF("SENDING RANGE GET MESSAGE TO 0x%04x", pub_cli->addr);
         break;
     case BT_MESH_MODEL_LIGHT_LIGHTNESS_DEFAULT_GET:
-        printk("Sending default get message to 0x%04x\n", pub_cli->addr);
+        LOG_INF("SENDING DEFAULT GET MESSAGE TO 0x%04x", pub_cli->addr);
         break;
     case BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_GET:
-        printk("Sending linear get message to 0x%04x\n", pub_cli->addr);
+        LOG_INF("SENDING LINEAR GET MESSAGE TO 0x%04x", pub_cli->addr);
         break;
     case BT_MESH_MODEL_LIGHT_LIGHTNESS_LAST_GET:
-        printk("Sending last get message to 0x%04x\n", pub_cli->addr);
+        LOG_INF("SENDING LAST GET MESSAGE TO 0x%04x", pub_cli->addr);
         break;
     default:
         return;
@@ -134,7 +132,7 @@ void send_light_lightness_get(struct lightness_cli *bt_cli, u32_t message_type)
     bt_mesh_model_msg_init(pub_cli->msg, message_type);
     int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
-        printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
+        LOG_ERR("BT MESH MODEL PUB ERR %d MESSAGE TO 0x%04x", err, pub_cli->addr);
     }
 }
 
@@ -142,12 +140,14 @@ void send_light_lightness_linear_set(struct lightness_cli *bt_cli)
 {
     struct bt_mesh_model_pub *pub_cli;
     pub_cli = bt_cli->m_model_cli->pub;
-    printk("Sending set linear message 0x%04x to 0x%04x\n", leds.m_brightness, pub_cli->addr);
+    LOG_INF("SENDING SET LINEAR MESSAGE 0x%04x TO 0x%04x", leds.m_brightness, pub_cli->addr);
+
     bt_mesh_model_msg_init(pub_cli->msg, BT_MESH_MODEL_LIGHT_LIGHTNESS_LINEAR_SET);
     net_buf_simple_add_le16(pub_cli->msg, leds.m_brightness);
     net_buf_simple_add_u8(pub_cli->msg, bt_cli->m_tid++);
+
     int err = bt_mesh_model_publish(bt_cli->m_model_cli);
     if (err) {
-        printk("BT MESH MODEL PUB ERR %d message to 0x%04x\n", err, pub_cli->addr);
+        LOG_ERR("BT MESH MODEL PUB ERR %d MESSAGE TO 0x%04x", err, pub_cli->addr);
     }
 }

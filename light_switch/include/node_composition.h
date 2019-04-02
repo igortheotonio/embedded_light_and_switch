@@ -3,6 +3,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/mesh.h>
+#include <logging/log.h>
 #include <misc/printk.h>
 #include <settings/settings.h>
 
