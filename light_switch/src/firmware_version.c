@@ -1,6 +1,5 @@
 #include "firmware_version.h"
 
-
 static const version_t __version = {VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD};
 
 const version_t *version_instance()

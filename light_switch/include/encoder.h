@@ -7,6 +7,7 @@
 #include <misc/util.h>
 #include <zephyr/types.h>
 
+#include "bt_callbacks.h"
 #include "defines.h"
 #include "functions.h"
 #include "leds.h"

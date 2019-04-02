@@ -1,6 +1,6 @@
 #include "encoder.h"
 
-LOG_MODULE_REGISTER(ENCONDER);
+LOG_MODULE_REGISTER(ENCONDER, 4);
 
 static u32_t time, button_last_time;
 static struct k_timer timer_enconder;
@@ -56,6 +56,7 @@ int encoder_configure(encoder_device_t *encoder_device)
 
         return 0;
     }
+
     return -EPERM;
 }
 
@@ -82,7 +83,6 @@ int encoder_init_and_configure(encoder_device_t *encoder_device)
 
 void callback_function(struct device *encoder_device, struct gpio_callback *callback,
                        u32_t encoder_pin_mask)
-
 {
     u32_t a_state = 0;
     u32_t b_state = 0;
@@ -123,7 +123,7 @@ void callback_function(struct device *encoder_device, struct gpio_callback *call
         gpio_pin_read(encoder_device, ENCODER_CHANNEL_B, &b_state);
         encoder.m_position += encoder_diretion[(a_state << SIZE_ONE_STATE) | b_state];
 
-        LOG_DBG("ENCODER ENABLED");
+        LOG_DBG("ENCODER SPIN");
 
         if (k_timer_status_get(&timer_enconder) > 0) {
             LOG_DBG("NEW THREAD");

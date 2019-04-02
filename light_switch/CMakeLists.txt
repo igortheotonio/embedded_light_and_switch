@@ -29,6 +29,7 @@ list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/encoder.c"
     "${PROJECT_SOURCE_DIR}/src/leds.c"
     "${PROJECT_SOURCE_DIR}/src/bt_mesh.c"
+    "${PROJECT_SOURCE_DIR}/src/bt_callbacks.c"
     "${PROJECT_SOURCE_DIR}/src/node_composition.c"
     "${PROJECT_SOURCE_DIR}/src/firmware_version.c"
     )
