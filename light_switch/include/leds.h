@@ -8,8 +8,7 @@
 #include <zephyr/types.h>
 
 #include "defines.h"
-
-// LOG_MODULE_REGISTER(LEDS);
+#include "node_composition.h"
 
 typedef struct {
     struct device *m_device;
@@ -28,11 +27,7 @@ int turn_all_leds_on(leds_device_t *leds_device);
 
 int turn_all_leds_off(leds_device_t *leds_device);
 
-int leds_brightness(leds_device_t *leds_device, u16_t brightness);
-
-int leds_change_state(leds_device_t *leds_device);
-
-int leds_set_brightness(leds_device_t *leds_device, u16_t brightness);
+int leds_brightness(leds_device_t *leds_device);
 
 int leds_init_and_configure(leds_device_t *leds_device);
 

@@ -7,18 +7,18 @@ BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 // 4 msg
 // 2 opcode
 // 1 tt
-BT_MESH_MODEL_PUB_DEFINE(light_lightness_srv_pub, NULL, 4 + 2 + 1);
+BT_MESH_MODEL_PUB_DEFINE(light_lightness_srv_pub, NULL, 2 + 5 + 4);
 
 // Comp
 
 static struct bt_mesh_cfg_srv cfg_srv = {
-    .relay            = BT_MESH_RELAY_DISABLED,
-    .beacon           = BT_MESH_BEACON_ENABLED,
+    .relay            = BT_MESH_RELAY_ENABLED,
+    .beacon           = BT_MESH_BEACON_DISABLED,
     .frnd             = BT_MESH_FRIEND_NOT_SUPPORTED,
     .gatt_proxy       = BT_MESH_GATT_PROXY_ENABLED,
     .default_ttl      = 7,
-    .net_transmit     = BT_MESH_TRANSMIT(2, 20),
-    .relay_retransmit = BT_MESH_TRANSMIT(2, 20),
+    .net_transmit     = BT_MESH_TRANSMIT(1, 20),
+    .relay_retransmit = BT_MESH_TRANSMIT(1, 20),
 };
 
 static struct bt_mesh_health_srv health_srv = {};
@@ -32,6 +32,8 @@ struct bt_mesh_model root_models[] = {
 
 struct bt_mesh_model srv_models[] = {
     BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV, light_lightness_setup_srv_op,
+                  &light_lightness_srv_pub, &light_lightness_state_data),
+    BT_MESH_MODEL(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV, light_lightness_srv_op,
                   &light_lightness_srv_pub, &light_lightness_state_data),
 };
 

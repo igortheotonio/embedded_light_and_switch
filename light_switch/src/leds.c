@@ -1,14 +1,18 @@
 #include "leds.h"
 
+LOG_MODULE_REGISTER(LEDS, 4);
+
 static const u32_t leds_pins[] = {LED0, LED1, LED2, LED3, LED4};
 
 int leds_init(leds_device_t *leds_device)
 {
     if (!leds_device) {
+        LOG_ERR("ENODEV");
         return -ENODEV;
     }
     leds_device->m_device = device_get_binding(LED_PORT);
     if (!leds_device->m_device) {
+        LOG_ERR("EPERM");
         return -EPERM;
     }
     leds_device->m_initiated = 1;
@@ -54,46 +58,25 @@ int turn_all_leds_off(leds_device_t *leds_device)
     return 0;
 }
 
-int leds_change_state(leds_device_t *leds_device)
+int leds_brightness(leds_device_t *leds_device)
 {
     if (!leds_device->m_initiated) {
-        return -EPERM;
-    }
-    if (leds_device->m_state) {
-        leds_brightness(leds_device, MIN_BRIGHTNESS);
-    } else {
-        if (!leds_device->m_brightness) {
-            leds_set_brightness(leds_device, MAX_BRIGHTNESS);
-        }
-        leds_brightness(leds_device, leds_device->m_brightness);
-    }
-
-
-    return 0;
-}
-
-int leds_set_brightness(leds_device_t *leds_device, u16_t brightness)
-{
-    if (!leds_device->m_initiated) {
+        LOG_ERR("EPERM");
         return -EPERM;
     }
 
-    leds_device->m_brightness = brightness;
-    return 0;
-}
-
-
-int leds_brightness(leds_device_t *leds_device, u16_t brightness)
-{
-    if (!leds_device->m_initiated) {
-        return -EPERM;
-    }
-    if (brightness > MAX_BRIGHTNESS || brightness < MIN_BRIGHTNESS) {
-        return -EINVAL;
+    if (leds.m_brightness > light_lightness_cli[0].m_max_range) {
+        leds.m_brightness = light_lightness_cli[0].m_max_range;
+    } else if (leds.m_brightness < light_lightness_cli[0].m_min_range) {
+        leds.m_brightness = light_lightness_cli[0].m_min_range;
     }
 
-    u8_t leds_brightness   = 100 * (brightness / MAX_BRIGHTNESS);
+    u8_t leds_brightness   = 100 * (((float) leds.m_brightness) / MAX_BRIGHTNESS);
     u8_t number_of_leds_on = (leds_brightness / LED_BRIGHTNESS_PART);
+
+    LOG_DBG("LUMINOSIDADE %d", leds.m_brightness);
+    LOG_DBG("PERCENTUAL %d", leds_brightness);
+    LOG_DBG("QT DE LEDS %d", number_of_leds_on);
 
     for (int i = 0; i < number_of_leds_on; i++) {
         gpio_pin_write(leds_device->m_device, leds_pins[i], LED_ON);
@@ -103,25 +86,35 @@ int leds_brightness(leds_device_t *leds_device, u16_t brightness)
         gpio_pin_write(leds_device->m_device, leds_pins[i], LED_OFF);
     }
 
-    if (brightness == 0) {
-        leds_device->m_state = OFF;
-    } else {
-        leds_device->m_state = ON;
-    }
-
     return 0;
 }
 
 int leds_init_and_configure(leds_device_t *leds_device)
 {
-    leds_init(leds_device);
-    leds_configure(leds_device);
+    LOG_INF("INIT LEDS");
+
+    int err = 0;
+
+    err = leds_init(leds_device);
+    if (err) {
+        return err;
+    }
+
+    err = leds_configure(leds_device);
+    if (err) {
+        return err;
+    }
+
+    LOG_INF("BLINK LEDS");
+
     for (u8_t i = 0; i < NUMBER_OF_BLINKS; i++) {
         turn_all_leds_on(leds_device);
         k_sleep(SLEEP_TIME);
         turn_all_leds_off(leds_device);
         k_sleep(SLEEP_TIME);
     }
+
+    LOG_INF("FINISH INIT LEDS");
 
     return 0;
 }

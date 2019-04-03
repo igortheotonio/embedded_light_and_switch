@@ -7,45 +7,61 @@
 #include "encoder.h"
 #include "firmware_version.h"
 #include "leds.h"
-#include "node_composition.h"
 
 LOG_MODULE_REGISTER(MAIN);
-
-#define BT_NAME "LIGHT_SWITCH"
 
 encoder_device_t encoder = {0};
 leds_device_t leds       = {0};
 
+int setup_peripherals()
+{
+    int err = 0;
+
+    // Init and configure leds
+    err = leds_init_and_configure(&leds);
+
+    if (err) {
+        LOG_ERR("LEDS ERROR: %d", err);
+        return err;
+    }
+
+    // Init and configure bluetooh
+    err = bt_init_and_configure();
+
+    if (err) {
+        LOG_ERR("BLUETOOTH ERROR: %d", err);
+        return err;
+    }
+
+    // Init and configure encoder
+    err = encoder_init_and_configure(&encoder);
+
+    if (err) {
+        LOG_ERR("ENCODER ERROR: %d", err);
+        return err;
+    }
+
+    return 0;
+}
+
 void main(void)
 {
-    printk("Firmware version: %d.%d.%d\n", version_get_major(), version_get_minor(),
-           version_get_build());
-    int err;
-    leds_init_and_configure(&leds);
-    encoder_init_and_configure(&encoder);
+    int err = 0;
 
-    err = bt_enable(bt_ready);
+    // Firmware version
+    LOG_WRN("FIRMWARE VERSION: %d.%d.%d\n", version_get_major(), version_get_minor(),
+            version_get_build());
+
+    // Inits peripherals
+    err = setup_peripherals();
+
     if (err) {
-        printk("bt_enable failed with err %d\n", err);
+        LOG_ERR("ERROR IN SETUP");
         return;
     }
 
-    light_lightness_cli[0].m_model_cli = &change_model[0];
-    u16_t brightness                   = 0;
+    // Loop
     while (1) {
-        if (encoder.m_position) {
-            if (leds.m_brightness + 2500 * encoder.m_position > 65535) {
-                brightness = 65535;
-            } else if (leds.m_brightness + 2500 * encoder.m_position < 0) {
-                brightness = 0;
-            } else {
-                brightness = leds.m_brightness + 2500 * encoder.m_position;
-            }
-            printk("Change value to %d\n", brightness);
-            encoder.m_position = 0;
-            leds_brightness(&leds, brightness);
-            leds_set_brightness(&leds, brightness);
-        }
-        k_sleep(1);
+        k_sleep(K_MSEC(SLEEP_TIME));
     }
 }
